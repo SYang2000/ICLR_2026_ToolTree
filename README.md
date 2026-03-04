@@ -21,7 +21,7 @@ This is the **official implementation** for the paper:
 
 Large Language Model (LLM) agents are increasingly applied to complex, multi-step tasks that require interaction with diverse external tools across various domains. However, current LLM agent tool planning methods typically rely on greedy, reactive tool selection strategies that lack foresight and fail to account for inter-tool dependencies.
 
-**ToolTree** is a novel Monte Carlo tree search-inspired planning paradigm for tool planning. It explores possible tool usage trajectories using a **dual-stage LLM evaluation** and **bidirectional pruning** mechanism that enables the agent to make informed, adaptive decisions over extended tool-use sequences while pruning less promising branches before and after the tool execution.
+**ToolTree** is a novel Monte Carlo tree search-inspired planning paradigm for agent tool planning. It explores possible tool usage trajectories using a **dual-stage LLM evaluation** and **bidirectional pruning** mechanism that enables the agent to make informed, adaptive decisions over extended tool-use sequences while pruning less promising branches before and after the tool execution.
 
 <p align="center">
   <img src="assets/comparison.png" width="100%">
@@ -50,24 +50,33 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
 
 ### Closed-Set Tool Planning (GTA & m&m)
 
-| Method | GTA (GPT-4o) |  | m&m (GPT-4o) |  |
-|:---|:---:|:---:|:---:|:---:|
-| | Tool F1 | Avg | Plan F1 | Avg |
-| Zero-shot | - | - | - | 80.51 |
-| ReAct | - | - | - | - |
-| CoT | - | - | - | - |
-| ToT | - | - | - | - |
-| LATS | - | - | - | - |
-| **ToolTree (Ours)** | - | **66.95** | - | **88.61** |
+**Table 1:** Comparison on GTA and m&m under GPT-4o (step-by-step and end-to-end modes).
+
+| Method | GTA (GPT-4o) | | | | AVG | m&m (GPT-4o) | | | | AVG |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| | Tool | Arg | Plan | Exec | | Tool | Arg | Plan | Exec | |
+| Zero-shot | 70.16 | 38.52 | 77.14 | 45.28 | 57.78 | 78.52 | 80.17 | 85.17 | 78.47 | 80.58 |
+| ReAct | 71.42 | 40.58 | 75.52 | 46.33 | 58.46 | 83.58 | 81.24 | 84.42 | 76.58 | 81.46 |
+| CoT | 66.52 | 42.17 | 73.22 | 42.86 | 56.69 | 85.58 | 77.84 | 78.16 | 71.43 | 78.75 |
+| Best-First | 72.13 | 44.26 | 77.64 | 47.83 | 60.46 | 84.47 | 82.17 | 85.84 | 78.11 | 82.65 |
+| ToT | 72.53 | 43.68 | 78.84 | 46.53 | 60.40 | 86.28 | 83.74 | 85.26 | 80.35 | 83.91 |
+| A* | 74.29 | 47.58 | 79.96 | 46.26 | 62.52 | 87.17 | 83.44 | 86.87 | 81.49 | 84.74 |
+| LATS | 77.84 | 49.90 | 82.57 | 48.80 | 64.78 | 88.89 | 84.77 | 88.38 | 83.77 | 86.45 |
+| **ToolTree (Ours)** | **79.26** | **50.84** | **85.53** | **52.17** | **66.95** | **91.92** | **86.16** | **90.47** | **85.88** | **88.61** |
 
 ### Open-Set Tool Planning (ToolBench & RestBench)
 
-| Method | ToolBench (GPT-4o) |  | RestBench-TMDB (GPT-4o) |  |
-|:---|:---:|:---:|:---:|:---:|
-| | Pass Rate | AVG | Pass Rate | AVG |
-| DFSDT | - | - | - | - |
-| LATS | - | - | - | - |
-| **ToolTree (Ours)** | **69.04** | **69.04** | - | **74.50** |
+**Table 2:** Open-set results on RestBench and ToolBench using GPT-4o.
+
+| Method | RestBench-TMDB | | AVG | RestBench-Spotify | | AVG | ToolBench | | AVG |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| | Pass | Win | | Pass | Win | | Pass | Win | |
+| Zero-shot | 56.28 | 50.00 | 53.14 | 49.54 | 50.00 | 49.77 | 47.58 | 50.00 | 48.79 |
+| CoT | 58.52 | 52.32 | 55.42 | 47.92 | 44.55 | 46.23 | 46.88 | 47.57 | 47.23 |
+| ReAct | 62.42 | 66.17 | 64.30 | 53.27 | 60.72 | 57.00 | 52.38 | 63.39 | 57.89 |
+| DFSDT | 66.57 | 69.08 | 67.82 | 55.48 | 71.63 | 63.55 | 54.86 | 68.59 | 61.73 |
+| LATS | 68.26 | 74.44 | 71.35 | 61.25 | 75.80 | 68.53 | 59.25 | 73.85 | 66.55 |
+| **ToolTree (Ours)** | **72.40** | **75.59** | **74.50** | **60.87** | **78.84** | **71.36** | **61.27** | **76.81** | **69.04** |
 
 ### Efficiency Analysis
 
@@ -99,6 +108,14 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
   <img src="assets/case_study.png" width="90%">
   <br>
   <em>Figure 6: A sample case of ToolTree on GTA. ToolTree progressively finds better tool trajectories guided by both pre-evaluation and post-evaluation rewards.</em>
+</p>
+
+### More Case Studies (Appendix)
+
+<p align="center">
+  <img src="assets/appendix_case_studies.png" width="90%">
+  <br>
+  <em>Figure 10: Two qualitative case studies showcasing ToolTree's iterative tool orchestration on (a) a radiology image question (medical VQA) and (b) a multi-hop knowledge reasoning task.</em>
 </p>
 
 ## Installation
