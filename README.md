@@ -113,9 +113,15 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
 ### More Case Studies (Appendix)
 
 <p align="center">
-  <img src="assets/appendix_case_studies.png" width="90%">
+  <img src="assets/case_study_medical.png" width="90%">
   <br>
-  <em>Figure 10: Two qualitative case studies showcasing ToolTree's iterative tool orchestration on (a) a radiology image question (medical VQA) and (b) a multi-hop knowledge reasoning task.</em>
+  <em>Figure 10(a): A qualitative case study showcasing ToolTree's iterative tool orchestration on a radiology image question (medical VQA).</em>
+</p>
+
+<p align="center">
+  <img src="assets/case_study_reasoning.png" width="90%">
+  <br>
+  <em>Figure 10(b): A qualitative case study showcasing ToolTree's iterative tool orchestration on a multi-hop knowledge reasoning task.</em>
 </p>
 
 ## Installation
@@ -196,4 +202,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgements
 
-We thank the reviewers for their valuable feedback. This work was supported in part by computational resources from [your institution].
+We thank the reviewers for their valuable feedback. This work was supported in part by computational resources from Spartan at the University of Melbourne.
