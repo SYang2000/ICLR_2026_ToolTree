@@ -7,21 +7,20 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
 </p>
 
+
+
 This is the **official implementation** for the paper:
 
-> **ToolTree: Efficient LLM Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning**
+> **ToolTree: Efficient LLM Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning** *(ICLR 2026)*
 >
-> [Shuo Yang](https://github.com/SYang2000), Caren Han, Yihao Ding, Shuhe Wang, Eduard Hovy
->
-> *Published as a conference paper at ICLR 2026*
+> Shuo Yang_1, Caren Han_1, Yihao Ding_2, Shuhe Wang_1, Eduard Hovy_1
+> 1_The University of Melbourne, 2_ The University of Western Australia
 
 ---
 
 ## Overview
 
-Large Language Model (LLM) agents are increasingly applied to complex, multi-step tasks that require interaction with diverse external tools across various domains. However, current LLM agent tool planning methods typically rely on greedy, reactive tool selection strategies that lack foresight and fail to account for inter-tool dependencies.
-
-**ToolTree** is a novel Monte Carlo tree search-inspired planning paradigm for agent tool planning. It explores possible tool usage trajectories using a **dual-stage LLM evaluation** and **bidirectional pruning** mechanism that enables the agent to make informed, adaptive decisions over extended tool-use sequences while pruning less promising branches before and after the tool execution.
+**ToolTree** is a novel Monte Carlo tree search-inspired planning paradigm for LLM agent tool planning. It explores possible tool usage trajectories using a **dual-stage LLM evaluation** and **bidirectional pruning** mechanism that enables the agent to make informed, adaptive decisions over extended tool-use sequences while pruning less promising branches before and after the tool execution.
 
 <p align="center">
   <img src="assets/comparison.png" width="100%">
