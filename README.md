@@ -1,7 +1,6 @@
-# ToolTree: Efficient LLM Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning
+# ToolTree: Efficient LLM Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning *ICLR_2026*
 
 <p align="center">
-  <em>ICLR 2026</em>
   <br>
   Shuo Yang<sup>1</sup>, Caren Han<sup>1</sup>, Yihao Ding<sup>2</sup>, Shuhe Wang<sup>1</sup>, Eduard Hovy<sup>1</sup>
   <br>
