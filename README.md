@@ -104,31 +104,36 @@ bash scripts/run_mm.sh
 
 ```
 ICLR_2026_ToolTree/
-├── assets/                  # Figures and images
-├── configs/                 # Configuration files
-│   ├── default.yaml
-│   ├── gta.yaml
-│   └── toolbench.yaml
-├── data/                    # Datasets (download separately)
-├── scripts/                 # Experiment launch scripts
-│   ├── run_gta.sh
-│   ├── run_toolbench.sh
-│   ├── run_restbench.sh
-│   └── run_mm.sh
+├── run.py                       # Main entry point
+├── configs/                     # YAML configuration files
+│   ├── default.yaml             #   Default hyperparameters (Appendix B.4)
+│   ├── gta.yaml                 #   GTA benchmark config
+│   └── toolbench.yaml           #   ToolBench benchmark config
 ├── src/
-│   ├── mcts/                # Monte Carlo Tree Search core
-│   │   ├── tree_search.py   # Main MCTS algorithm
-│   │   ├── node.py          # Tree node definition
-│   │   └── pruning.py       # Bidirectional pruning
-│   ├── agents/              # LLM agent implementations
-│   │   ├── tooltree_agent.py
-│   │   └── base_agent.py
-│   ├── tools/               # Tool management
-│   │   ├── tool_manager.py
-│   │   └── tool_registry.py
-│   └── evaluation/          # Evaluation metrics
-│       ├── metrics.py
-│       └── benchmarks.py
+│   ├── config.py                # Dataclass-based configuration
+│   ├── llm/                     # LLM API wrapper
+│   │   └── client.py            #   Unified client (OpenAI, Anthropic, local)
+│   ├── mcts/                    # Monte Carlo Tree Search core
+│   │   ├── node.py              #   MCTSNode with UCT selection (Eq. 1)
+│   │   ├── tree_search.py       #   Main MCTS search loop (Section 3.1)
+│   │   └── pruning.py           #   Bidirectional pruning (Section 3.2)
+│   ├── agents/                  # Agent implementations
+│   │   ├── base_agent.py        #   Abstract base agent
+│   │   └── tooltree_agent.py    #   ToolTree orchestrator
+│   ├── tools/                   # Tool management
+│   │   ├── tool_registry.py     #   Tool card storage & retrieval
+│   │   └── tool_manager.py      #   Execution with deterministic caching
+│   ├── evaluation/              # Evaluation
+│   │   ├── judge.py             #   LLM judge for pre/post scoring
+│   │   ├── metrics.py           #   F1, pass rate, win rate
+│   │   └── benchmarks.py        #   Data loaders (GTA, m&m, ToolBench, RestBench)
+│   └── prompts/                 # Prompt templates
+│       ├── pre_eval_prompt.py   #   Pre-evaluation judge (Appendix B.7)
+│       ├── post_eval_prompt.py  #   Post-evaluation judge (Appendix B.8)
+│       └── answer_prompt.py     #   Answer predictor
+├── scripts/                     # Experiment launch scripts
+├── data/                        # Datasets (download separately)
+├── assets/                      # Figures and images
 ├── requirements.txt
 ├── LICENSE
 └── README.md

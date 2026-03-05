@@ -1,0 +1,26 @@
+# GTA benchmark configuration
+# Closed-set: 14 tools, step-by-step + end-to-end modes
+
+benchmark: "gta"
+
+mcts:
+  exploration_constant: 1.4
+  max_rollouts: 60
+  tau_pre: 0.3
+  tau_post: 0.4
+  early_stop_delta: 0.001
+  early_stop_patience: 10
+  max_depth: 10
+
+planner_llm:
+  model_name: "gpt-4o"
+  temperature: 0.0
+  max_tokens: 1024
+
+judge_llm:
+  model_name: "gpt-4o"
+  temperature: 0.0
+  max_tokens: 512
+
+data_path: "data/gta/"
+output_path: "outputs/gta/"
