@@ -1,8 +1,6 @@
 <h1 align="center">ToolTree: Efficient LLM Agent Tool Planning via<br>Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning</h1>
 
-<p align="center">
-  <h3>Accepted at ICLR 2026</h3>
-</p>
+<h3 align="center">Accepted at ICLR 2026</h3>
 
 <p align="center">
   Shuo Yang<sup>1</sup> &nbsp;&nbsp; Caren Han<sup>1</sup> &nbsp;&nbsp; Yihao Ding<sup>2</sup> &nbsp;&nbsp; Shuhe Wang<sup>1</sup> &nbsp;&nbsp; Eduard Hovy<sup>1</sup>
@@ -65,38 +63,18 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
   <em>Figure 3: Progressive efficiency analysis across step limits. ToolTree achieves the highest efficiency (performance gain per second) compared with all baselines.</em>
 </p>
 
-### Model Scaling Analysis
 
-<p align="center">
-  <img src="assets/model_scaling.png" width="80%">
-  <br>
-  <em>Figure 4: Performance with respect to backbone model scale on GTA and ToolBench.</em>
-</p>
-
-### Ablation: Effect of Bidirectional Pruning
-
-<p align="center">
-  <img src="assets/ablation_pruning.png" width="80%">
-  <br>
-</p>
 
 ### Case Study
 
-<p align="center">
-  <img src="assets/case_study.png" width="90%">
-  <br>
-  <em>Figure 6: A sample case of ToolTree on GTA. ToolTree progressively finds better tool trajectories guided by both pre-evaluation and post-evaluation rewards.</em>
-</p>
+
 
 <p align="center">
   <img src="assets/case_study_medical.png" width="90%">
   <br>
 </p>
 
-<p align="center">
-  <img src="assets/case_study_reasoning.png" width="90%">
-  <br>
-</p>
+
 
 ## Installation
 
@@ -162,13 +140,15 @@ If you find this work useful, please cite our paper:
 
 ```bibtex
 @inproceedings{yang2026tooltree,
-  title={ToolTree: Efficient LLM Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning},
-  author={Yang, Shuo and Han, Caren and Ding, Yihao and Wang, Shuhe and Hovy, Eduard},
-  booktitle={International Conference on Learning Representations (ICLR)},
-  year={2026},
-  url={https://openreview.net/forum?id=Ef5O9gNNLE}
+title={ToolTree: Efficient {LLM} Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning},
+author={Shuo Yang and Caren Han and Yihao Ding and Shuhe Wang and Eduard Hovy},
+booktitle={The Fourteenth International Conference on Learning Representations},
+year={2026},
+url={https://openreview.net/forum?id=Ef5O9gNNLE}
 }
 ```
+
+
 
 ## License
 
