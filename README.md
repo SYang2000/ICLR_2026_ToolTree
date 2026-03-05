@@ -1,10 +1,15 @@
-# ToolTree: Efficient LLM Agent Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning (*ICLR_2026*)
+<h1 align="center">ToolTree: Efficient LLM Agent Tool Planning via<br>Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning</h1>
 
 <p align="center">
-  <br>
-  Shuo Yang<sup>1</sup>, Caren Han<sup>1</sup>, Yihao Ding<sup>2</sup>, Shuhe Wang<sup>1</sup>, Eduard Hovy<sup>1</sup>
-  <br>
-  <sup>1</sup>The University of Melbourne, <sup>2</sup>The University of Western Australia
+  <b>ICLR 2026</b>
+</p>
+
+<p align="center">
+  Shuo Yang<sup>1</sup> &nbsp;&nbsp; Caren Han<sup>1</sup> &nbsp;&nbsp; Yihao Ding<sup>2</sup> &nbsp;&nbsp; Shuhe Wang<sup>1</sup> &nbsp;&nbsp; Eduard Hovy<sup>1</sup>
+</p>
+
+<p align="center">
+  <sup>1</sup>The University of Melbourne &nbsp;&nbsp; <sup>2</sup>The University of Western Australia
 </p>
 
 <p align="center">
