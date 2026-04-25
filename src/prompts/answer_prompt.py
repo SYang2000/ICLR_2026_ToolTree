@@ -29,4 +29,36 @@ def build_answer_message(query: str, trajectory: list[dict]) -> str:
     Returns:
         Formatted user message string for the answer predictor.
     """
-    raise NotImplementedError
+    import json
+
+    def _fmt(value: object) -> str:
+        try:
+            return json.dumps(value, indent=2, ensure_ascii=False, default=str)
+        except Exception:
+            return str(value)
+
+    lines = [
+        "## User Query",
+        str(query),
+        "",
+        "## Tool Call Trajectory",
+    ]
+    if not trajectory:
+        lines.append("(no tool calls were made)")
+    else:
+        for idx, step in enumerate(trajectory, start=1):
+            action = step.get("action")
+            args = step.get("args")
+            output = step.get("output")
+            lines.append(f"### Step {idx}: {action}")
+            lines.append(f"Arguments: {_fmt(args)}")
+            lines.append(f"Output: {_fmt(output)}")
+            lines.append("")
+    lines.extend(
+        [
+            "## Task",
+            "Using only the information in the tool outputs above, produce a "
+            "clear, accurate, and concise final answer to the user query.",
+        ]
+    )
+    return "\n".join(lines)

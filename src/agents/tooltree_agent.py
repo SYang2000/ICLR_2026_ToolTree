@@ -6,90 +6,123 @@ ToolRegistry, and the Answer Predictor to solve multi-tool queries.
 
 from __future__ import annotations
 
+from dataclasses import asdict
+
 from src.agents.base_agent import BaseAgent
 from src.config import ToolTreeConfig
+from src.evaluation.judge import LLMJudge
+from src.llm.client import LLMClient
+from src.mcts.tree_search import ToolTreeSearch
+from src.prompts.answer_prompt import (
+    ANSWER_PREDICTOR_SYSTEM_PROMPT,
+    build_answer_message,
+)
+from src.tools.tool_manager import ToolManager
+from src.tools.tool_registry import ToolCard, ToolRegistry
 
 
 class ToolTreeAgent(BaseAgent):
-    """Main ToolTree agent that orchestrates MCTS-based tool planning.
-
-    Components initialized:
-        - planner_llm: LLM client for action generation.
-        - judge_llm: LLM client for pre/post evaluation.
-        - tool_registry: Registry of available tool cards.
-        - tool_manager: Tool execution with caching.
-        - judge: LLM judge for dual evaluation.
-        - searcher: MCTS search engine.
-    """
+    """Main ToolTree agent that orchestrates MCTS-based tool planning."""
 
     def __init__(self, config: ToolTreeConfig) -> None:
-        """Initialize all components from config.
-
-        Sets up LLM clients, tool registry, tool manager, LLM judge,
-        and the MCTS searcher.
-
-        Args:
-            config: Full ToolTree configuration.
-        """
-        raise NotImplementedError
+        super().__init__(config)
+        self.planner_llm = LLMClient(config.planner_llm)
+        self.judge_llm = LLMClient(config.judge_llm)
+        self.tool_registry = ToolRegistry()
+        tools_dir = config.data_path.rstrip("/") + "/tools"
+        try:
+            self.tool_registry.load_from_directory(tools_dir)
+        except Exception:
+            pass
+        self.tool_manager = ToolManager(self.tool_registry)
+        self.judge = LLMJudge(self.judge_llm)
+        self.searcher = ToolTreeSearch(
+            config.mcts,
+            self.tool_manager,
+            self.judge,
+            self.planner_llm,
+        )
 
     def solve(self, query: str, context: dict | None = None) -> dict:
-        """Run ToolTree on a single query.
+        """Run ToolTree on a single query."""
+        context = context or {}
+        available_tools = self._get_available_tools(query, context)
+        trajectory, best_q = self.searcher.search(query, context, available_tools)
+        answer = self._predict_answer(query, trajectory)
+        rollouts_used = getattr(self.searcher, "_rollouts_used", 0)
+        return {
+            "answer": answer,
+            "trajectory": trajectory,
+            "reward": best_q,
+            "rollouts_used": rollouts_used,
+        }
 
-        Steps:
-            1. Retrieve or load available tools (closed-set or open-set).
-            2. Run MCTS search to find the best tool trajectory.
-            3. Use the answer predictor to generate the final answer
-               from the best trajectory.
-            4. Return the answer with trajectory and metadata.
+    def _get_available_tools(self, query: str, context: dict | None = None) -> list[dict]:
+        """Return tool card dicts available for this query.
 
-        Args:
-            query: The user's natural language query.
-            context: Optional initial context.
-
-        Returns:
-            Dict with keys:
-                - "answer": str -- predicted answer.
-                - "trajectory": list[dict] -- optimal tool chain found by MCTS.
-                - "reward": float -- Q-value of the best trajectory.
-                - "rollouts_used": int -- number of MCTS rollouts performed.
+        Precedence: per-sample tools from context, then registry.
         """
-        raise NotImplementedError
+        context = context or {}
+        per_sample = context.get("available_tools") or []
+        if per_sample:
+            return [self._normalize_tool_dict(t) for t in per_sample]
+        if self.config.benchmark in ("gta", "mm"):
+            tools = self.tool_registry.get_all_tools()
+        else:
+            tools = self.tool_registry.retrieve_tools(query, k=self.config.tool_retrieval_k)
+        return [self._tool_card_to_dict(t) for t in tools]
 
-    def _get_available_tools(self, query: str) -> list[dict]:
-        """Get available tools for the current query.
+    @staticmethod
+    def _normalize_tool_dict(raw: dict) -> dict:
+        """Map external tool dicts (GTA-style) to our tool-card shape."""
+        if "input_schema" in raw:
+            return raw
+        input_schema = {
+            "type": "object",
+            "properties": {
+                (inp.get("name") or f"arg_{i}"): {
+                    "type": inp.get("type", "string"),
+                    "description": inp.get("description") or "",
+                }
+                for i, inp in enumerate(raw.get("inputs") or [])
+            },
+            "required": [inp.get("name") for inp in (raw.get("inputs") or []) if not inp.get("optional") and inp.get("name")],
+        }
+        output_schema = {
+            "type": "object",
+            "properties": {
+                (out.get("name") or "output"): {
+                    "type": out.get("type", "string"),
+                    "description": out.get("description") or "",
+                }
+                for out in (raw.get("outputs") or [])
+            },
+        }
+        return {
+            "name": raw.get("name"),
+            "description": raw.get("description") or "",
+            "input_schema": input_schema,
+            "output_schema": output_schema,
+            "examples": raw.get("examples") or [],
+            "domain": raw.get("domain") or "",
+        }
 
-        For closed-set benchmarks (GTA, m&m): returns all tools in the registry.
-        For open-set benchmarks (ToolBench, RestBench): retrieves top-K tools
-        relevant to the query using the tool registry's retrieval method.
-
-        Args:
-            query: The user query for tool retrieval.
-
-        Returns:
-            List of tool card dicts.
-        """
-        raise NotImplementedError
+    @staticmethod
+    def _tool_card_to_dict(tool_card: ToolCard) -> dict:
+        return asdict(tool_card)
 
     def _predict_answer(self, query: str, trajectory: list[dict]) -> str:
-        """Use the answer predictor LLM to generate the final answer.
-
-        Takes the best MCTS trajectory (sequence of tool calls and outputs)
-        and prompts the LLM to synthesize a final answer (Section 3.1 --
-        Answer Predictor).
-
-        Args:
-            query: The original user query.
-            trajectory: The best tool chain from MCTS search.
-
-        Returns:
-            The predicted answer string.
-        """
-        raise NotImplementedError
+        """Use the answer predictor LLM to generate the final answer."""
+        user_msg = build_answer_message(query, trajectory)
+        messages = [
+            {"role": "system", "content": ANSWER_PREDICTOR_SYSTEM_PROMPT},
+            {"role": "user", "content": user_msg},
+        ]
+        try:
+            return self.planner_llm.generate(messages)
+        except Exception as exc:
+            return f"<answer_prediction_failed: {exc}>"
 
     def reset(self) -> None:
-        """Clear caches and reset state between tasks.
-
-        Clears the tool execution cache and any internal counters.
-        """
-        raise NotImplementedError
+        """Clear caches and reset state between tasks."""
+        self.tool_manager.clear_cache()

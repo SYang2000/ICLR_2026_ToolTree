@@ -1,55 +1,48 @@
-"""Unified LLM API wrapper supporting OpenAI, Anthropic, and local models."""
+"""Unified LLM client against an OpenAI-compatible endpoint (vLLM, OpenAI, etc.)."""
 
 from __future__ import annotations
+
+import json
+import os
+import re
+from typing import Optional
 
 from src.config import LLMConfig
 
 
 class LLMClient:
-    """Unified wrapper for LLM API calls.
-
-    Supports OpenAI (GPT-4o, GPT-4o-mini), Anthropic, and local
-    models (LLaMA, Qwen) via a consistent interface.
-    """
-
     def __init__(self, config: LLMConfig) -> None:
-        """Initialize LLM client with model configuration.
+        from openai import OpenAI
 
-        Args:
-            config: LLM configuration specifying model, temperature, etc.
-        """
-        raise NotImplementedError
+        self.config = config
+        base_url = config.base_url or os.environ.get("OPENAI_BASE_URL") or "http://localhost:8000/v1"
+        api_key = config.api_key or os.environ.get("OPENAI_API_KEY") or "EMPTY"
+        self.client = OpenAI(base_url=base_url, api_key=api_key)
 
     def generate(
         self,
         messages: list[dict[str, str]],
-        temperature: float | None = None,
-        max_tokens: int | None = None,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
         json_mode: bool = False,
     ) -> str:
-        """Send messages to the LLM and return the text response.
-
-        Args:
-            messages: List of message dicts with "role" and "content" keys.
-            temperature: Override default temperature if provided.
-            max_tokens: Override default max tokens if provided.
-            json_mode: If True, request JSON-formatted output.
-
-        Returns:
-            The model's text response.
-        """
-        raise NotImplementedError
+        kwargs = {
+            "model": self.config.model_name,
+            "messages": messages,
+            "temperature": self.config.temperature if temperature is None else temperature,
+            "max_tokens": self.config.max_tokens if max_tokens is None else max_tokens,
+        }
+        if json_mode:
+            kwargs["response_format"] = {"type": "json_object"}
+        resp = self.client.chat.completions.create(**kwargs)
+        return resp.choices[0].message.content or ""
 
     def generate_json(self, messages: list[dict[str, str]]) -> dict:
-        """Send messages and parse the response as a JSON object.
-
-        Args:
-            messages: List of message dicts with "role" and "content" keys.
-
-        Returns:
-            Parsed JSON response as a dict.
-
-        Raises:
-            ValueError: If the response cannot be parsed as valid JSON.
-        """
-        raise NotImplementedError
+        text = self.generate(messages, json_mode=True)
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            m = re.search(r"\{.*\}", text, re.DOTALL)
+            if m:
+                return json.loads(m.group(0))
+            raise ValueError(f"Could not parse JSON from response: {text[:200]}")

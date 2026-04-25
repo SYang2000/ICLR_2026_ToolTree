@@ -1,44 +1,19 @@
-"""MCTS Node definition for ToolTree.
-
-Each node represents a state in the tool planning search tree.
-Edges correspond to tool actions. The node stores Q-values, visit
-counts, and pre/post evaluation scores as described in Section 3.
-"""
+"""MCTS Node for ToolTree search tree."""
 
 from __future__ import annotations
 
+import math
+import random
+from typing import Optional
+
 
 class MCTSNode:
-    """A node in the MCTS search tree representing a state in tool planning.
-
-    Attributes:
-        state: Current dialogue context and accumulated intermediate results.
-        action: The tool action that led to this node (None for root).
-        parent: Parent node reference.
-        children: List of child nodes.
-        visit_count: N(s, a) -- number of times this node has been visited.
-        q_value: Q(s, a) -- running mean of post-evaluation rewards.
-        r_pre: Pre-evaluation score for this action (prior signal).
-        r_post: Post-evaluation score after execution (None if not yet executed).
-        is_expandable: Whether this node can be further expanded (not post-pruned).
-        is_terminal: Whether this node represents a completed trajectory.
-        tool_output: Cached output from tool execution (None if not yet executed).
-        action_args: Cached argument draft for the tool call.
-    """
-
     def __init__(
         self,
         state: dict,
         action: dict | None = None,
         parent: "MCTSNode | None" = None,
     ) -> None:
-        """Initialize a new MCTS node.
-
-        Args:
-            state: The dialogue state at this node (context + intermediate results).
-            action: The tool action that led to this node (None for root).
-            parent: The parent node (None for root).
-        """
         self.state = state
         self.action = action
         self.parent = parent
@@ -53,72 +28,66 @@ class MCTSNode:
         self.action_args: dict | None = None
 
     def is_leaf(self) -> bool:
-        """Check if this node is a leaf (has no children).
-
-        Returns:
-            True if the node has no children.
-        """
-        raise NotImplementedError
+        return len(self.children) == 0
 
     def is_root(self) -> bool:
-        """Check if this node is the root (has no parent).
-
-        Returns:
-            True if this node has no parent.
-        """
-        raise NotImplementedError
+        return self.parent is None
 
     def is_fully_expanded(self, admissible_actions: list[dict]) -> bool:
-        """Check if all admissible actions have been tried from this node.
+        tried = {self._action_key(c.action) for c in self.children if c.action is not None}
+        return all(self._action_key(a) in tried for a in admissible_actions)
 
-        Args:
-            admissible_actions: List of all valid actions from this state.
-
-        Returns:
-            True if every admissible action has a corresponding child node.
-        """
-        raise NotImplementedError
+    @staticmethod
+    def _action_key(action: dict | None) -> str:
+        if action is None:
+            return ""
+        args = action.get("tool_args") or {}
+        try:
+            args_repr = sorted(args.items())
+        except Exception:
+            args_repr = str(args)
+        return f"{action.get('tool_name', '')}::{args_repr}"
 
     def best_child(self, exploration_constant: float) -> "MCTSNode":
-        """Select the best child using prior-augmented UCT (Eq. 1 in paper).
+        expandable = [c for c in self.children if c.is_expandable]
+        if not expandable:
+            raise ValueError("No expandable children.")
+        parent_visits = max(self.visit_count, 1)
+        log_parent = math.log(parent_visits + 1)
 
-        UCT(s, a) = Q(s, a) + lambda * r_pre(s, a) * sqrt(ln N(s)) / (1 + N(s, a))
+        def uct(child: "MCTSNode") -> float:
+            exploit = child.q_value
+            prior = child.r_pre if child.r_pre > 0 else 1e-6
+            explore = (
+                exploration_constant
+                * prior
+                * math.sqrt(log_parent)
+                / (1 + child.visit_count)
+            )
+            jitter = random.random() * 1e-9
+            return exploit + explore + jitter
 
-        Only considers children where is_expandable=True.
-        Ties are broken by larger N(s), then small random jitter for diversity.
-
-        Args:
-            exploration_constant: lambda -- balances exploration vs exploitation.
-
-        Returns:
-            The child node with the highest UCT value.
-
-        Raises:
-            ValueError: If no expandable children exist.
-        """
-        raise NotImplementedError
+        return max(expandable, key=uct)
 
     def update(self, reward: float) -> None:
-        """Update visit count and Q-value using incremental mean.
-
-        N(s, a) <- N(s, a) + 1
-        Q(s, a) <- Q(s, a) + (reward - Q(s, a)) / N(s, a)
-
-        Args:
-            reward: The r_post score to incorporate (in [0, 1]).
-        """
-        raise NotImplementedError
+        self.visit_count += 1
+        self.q_value += (reward - self.q_value) / self.visit_count
 
     def get_trajectory(self) -> list[dict]:
-        """Return the sequence of (action, output) pairs from root to this node.
-
-        Returns:
-            List of dicts, each containing "action", "args", and "output" keys.
-        """
-        raise NotImplementedError
+        path = []
+        node: Optional[MCTSNode] = self
+        while node is not None and node.parent is not None:
+            path.append(
+                {
+                    "action": (node.action or {}).get("tool_name"),
+                    "args": node.action_args or (node.action or {}).get("tool_args"),
+                    "output": node.tool_output,
+                }
+            )
+            node = node.parent
+        return list(reversed(path))
 
     def __repr__(self) -> str:
-        """String representation showing action, Q-value, and visit count."""
         action_name = self.action.get("tool_name", "root") if self.action else "root"
         return (
             f"MCTSNode(action={action_name}, Q={self.q_value:.4f}, "

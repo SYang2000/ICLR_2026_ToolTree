@@ -1,7 +1,7 @@
-# GTA benchmark configuration
-# Closed-set: 14 tools, step-by-step + end-to-end modes
+# m&m benchmark configuration
+# Closed-set: 33 APIs spanning vision, text, and arithmetic.
 
-benchmark: "gta"
+benchmark: "mm"
 
 mcts:
   exploration_constant: 1.4
@@ -25,5 +25,5 @@ judge_llm:
   temperature: 0.0
   max_tokens: 512
 
-data_path: "data/gta/"
-output_path: "outputs/gta/"
+data_path: "data/mm/"
+output_path: "outputs/mm/"

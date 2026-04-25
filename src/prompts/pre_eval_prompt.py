@@ -52,4 +52,48 @@ def build_pre_eval_user_message(
     Returns:
         Formatted user message string for the judge.
     """
-    raise NotImplementedError
+    import json
+
+    def _fmt(value: object) -> str:
+        try:
+            return json.dumps(value, indent=2, ensure_ascii=False, default=str)
+        except Exception:
+            return str(value)
+
+    tool_name = tool_card.get("name", "") if isinstance(tool_card, dict) else ""
+    tool_description = tool_card.get("description", "") if isinstance(tool_card, dict) else ""
+    input_schema = tool_card.get("input_schema", {}) if isinstance(tool_card, dict) else {}
+    output_schema = tool_card.get("output_schema", {}) if isinstance(tool_card, dict) else {}
+    examples = tool_card.get("examples", []) if isinstance(tool_card, dict) else []
+
+    parts = [
+        "## User Query",
+        str(query),
+        "",
+        "## Current Context",
+        _fmt(context) if not isinstance(context, str) else context,
+        "",
+        "## Candidate Tool Card",
+        f"Name: {tool_name}",
+        f"Description: {tool_description}",
+        "Input schema:",
+        _fmt(input_schema),
+        "Output schema:",
+        _fmt(output_schema),
+    ]
+    if examples:
+        parts.append("Examples:")
+        parts.append(_fmt(examples))
+    parts.extend(
+        [
+            "",
+            "## Proposed Argument Draft",
+            _fmt(arg_draft),
+            "",
+            "## Task",
+            "Score how promising this candidate tool call is on a scale in [0, 1].",
+            'Respond with a single JSON object: {"score": <float in [0,1]>, '
+            '"explanation": "<2-4 sentences>"}.',
+        ]
+    )
+    return "\n".join(parts)

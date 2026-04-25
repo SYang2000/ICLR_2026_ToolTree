@@ -54,4 +54,43 @@ def build_post_eval_user_message(
     Returns:
         Formatted user message string for the judge.
     """
-    raise NotImplementedError
+    import json
+
+    def _fmt(value: object) -> str:
+        try:
+            return json.dumps(value, indent=2, ensure_ascii=False, default=str)
+        except Exception:
+            return str(value)
+
+    tool_name = tool_card.get("name", "") if isinstance(tool_card, dict) else ""
+    tool_description = tool_card.get("description", "") if isinstance(tool_card, dict) else ""
+    input_schema = tool_card.get("input_schema", {}) if isinstance(tool_card, dict) else {}
+    output_schema = tool_card.get("output_schema", {}) if isinstance(tool_card, dict) else {}
+
+    parts = [
+        "## User Query",
+        str(query),
+        "",
+        "## Context Before Tool Call",
+        _fmt(context_before) if not isinstance(context_before, str) else context_before,
+        "",
+        "## Tool Card",
+        f"Name: {tool_name}",
+        f"Description: {tool_description}",
+        "Input schema:",
+        _fmt(input_schema),
+        "Output schema:",
+        _fmt(output_schema),
+        "",
+        "## Arguments Used",
+        _fmt(args_used),
+        "",
+        "## Actual Tool Output",
+        _fmt(tool_output),
+        "",
+        "## Task",
+        "Score the grounded utility of this executed tool call on a scale in [0, 1].",
+        'Respond with a single JSON object: {"score": <float in [0,1]>, '
+        '"explanation": "<2-4 sentences>"}.',
+    ]
+    return "\n".join(parts)

@@ -38,3 +38,21 @@ wandb/
 
 # Paper
 paper.pdf
+
+# Local experiment artifacts (never push)
+experiments/
+experiments_stale_*/
+*.patch
+epoch_*/
+judge_*.json
+run_log_*.txt
+PLAN.md
+
+# Tokens and secrets
+*.token
+hf_token
+.huggingface/
+
+# Cache
+.cache/
+
