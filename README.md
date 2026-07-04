@@ -10,10 +10,16 @@
 </p>
 
 <p align="center">
-  <a href="https://openreview.net/forum?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/ICLR-2026-blue.svg" alt="ICLR 2026"></a>
-  <a href="https://openreview.net/pdf?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/Paper-PDF-red.svg" alt="Paper PDF"></a>
-  <a href="https://github.com/SYang2000/ICLR_2026_ToolTree"><img src="https://img.shields.io/badge/GitHub-Code-black.svg" alt="GitHub"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
+  <a href="https://openreview.net/forum?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/ICLR_2026-Paper-B31B1B?style=for-the-badge" alt="Paper (ICLR 2026)"></a>
+  <a href="https://openreview.net/pdf?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/Paper-PDF-475569?style=for-the-badge" alt="Paper PDF"></a>
+</p>
+
+<p align="center">
+  <a href="https://syang2000.github.io/ICLR_2026_ToolTree/"><img src="https://img.shields.io/badge/%F0%9F%8C%90_Project_Page-Results_%C2%B7_Figures_%C2%B7_Case_Study-2563EB?style=for-the-badge" alt="Project Page: results, figures, case study"></a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2EA44F?style=flat-square" alt="License: MIT"></a>
 </p>
 
 ---

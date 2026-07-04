@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ToolTree: Efficient LLM Agent Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning</title>
+<meta name="description" content="ToolTree plans LLM agent tool use via dual-feedback Monte Carlo tree search with bidirectional pruning — state-of-the-art across 4 benchmarks with an average gain of ~10% over existing methods.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="static/style.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<!-- ================= Sticky section nav (shown after scrolling past the hero) ================= -->
+<nav class="topnav" id="topnav" aria-label="Page sections">
+  <div class="topnav-inner">
+    <a class="topnav-brand" href="#top">ToolTree</a>
+    <div class="topnav-links">
+      <a href="#overview">Overview</a>
+      <a href="#efficiency">Efficiency</a>
+      <a href="#method">Method</a>
+      <a href="#case-study">Case Study</a>
+      <a href="#results">Results</a>
+      <a href="#ablation">Ablation</a>
+      <a href="#bibtex">BibTeX</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= Hero ================= -->
+<header class="hero" id="top">
+  <div class="container">
+    <h1><span class="hero-name">ToolTree</span>: Efficient LLM Agent Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning</h1>
+    <p class="authors">
+      Shuo Yang, Caren Han, Yihao Ding, Shuhe Wang, Eduard Hovy
+    </p>
+    <p class="affiliation">The University of Melbourne &#183; The University of Western Australia</p>
+    <p class="venue"><span class="venue-chip">ICLR 2026</span></p>
+    <nav class="button-row" aria-label="Paper links">
+      <a class="btn" href="https://openreview.net/forum?id=Ef5O9gNNLE" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Paper</a>
+      <a class="btn" href="https://openreview.net/pdf?id=Ef5O9gNNLE" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF</a>
+      <a class="btn" href="https://github.com/SYang2000/ICLR_2026_ToolTree" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Code</a>
+      <a class="btn btn-ghost" href="#bibtex"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>BibTeX</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= Metric callouts ================= -->
+<section class="metrics">
+  <div class="container">
+    <div class="metric-grid reveal stagger">
+      <div class="metric-card">
+        <div class="metric-value">~10%</div>
+        <div class="metric-label">Average gain over existing methods</div>
+        <div class="metric-sub">Across both closed-set and open-set tool planning scenarios</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">SOTA</div>
+        <div class="metric-label">State-of-the-art across all 4 benchmarks</div>
+        <div class="metric-sub">GTA &#183; m&amp;m &#183; ToolBench &#183; RestBench</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">#1</div>
+        <div class="metric-label">Highest efficiency (performance gain per second)</div>
+        <div class="metric-sub">Compared with all baselines across step limits</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Overview ================= -->
+<section id="overview">
+  <div class="container">
+    <h2>Overview</h2>
+    <div class="abstract-card reveal">
+      <p class="abstract-text">
+          <strong>ToolTree</strong> is a novel Monte Carlo tree search-inspired planning paradigm for
+          LLM agent tool planning. It explores possible tool usage trajectories using a
+          <strong>dual-stage LLM evaluation</strong> and <strong>bidirectional pruning</strong> mechanism
+          that enables the agent to make informed, adaptive decisions over extended tool-use sequences
+          while pruning less promising branches before and after the tool execution.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Efficiency (Figure 3) ================= -->
+<section class="fig3-band section-alt" id="efficiency" aria-label="Progressive efficiency analysis">
+  <div class="container">
+    <h2>Efficiency</h2>
+    <figure class="paper-figure reveal">
+      <img src="static/paper/efficiency.png" alt="Three line charts across step limits comparing ReAct, Best-first, ToT, LATS, and ToolTree: performance versus step limit, running time versus step limit, and efficiency (performance gain per second) versus step limit — ToolTree sits highest on the performance and efficiency panels at every step limit.">
+      <figcaption><span class="fig-tag">Figure 3:</span> Progressive efficiency analysis across step limits.
+        ToolTree achieves the highest efficiency (performance gain per second) compared with all baselines.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= Method ================= -->
+<section id="method">
+  <div class="container">
+    <h2>Method</h2>
+    <figure class="paper-figure reveal">
+      <img src="static/paper/architecture.png" alt="ToolTree pipeline: an input query enters a repeated loop over the tool tree — selection, pre-evaluation of a candidate tool against a threshold before execution, expansion, execution, post-evaluation of the observed output, and backward-propagation — after which the answer predictor produces the final answer.">
+      <figcaption>Architecture overview of ToolTree. An input query is processed sequentially via iterative
+        dual evaluation-guided Monte Carlo Tree Search, including selection, pre-evaluation, expansion,
+        execution, post-evaluation and backward-propagation.</figcaption>
+    </figure>
+
+    <div class="mech-grid mech-grid-4 reveal stagger">
+      <div class="mech-card">
+        <span class="mech-num">1</span>
+        <h3>Pre-Evaluation</h3>
+        <p>
+          A fast predictive signal that estimates the utility of a tool <em>before</em> execution,
+          filtering schema- or slot-incompatible calls before expansion.
+        </p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-num">2</span>
+        <h3>Post-Evaluation</h3>
+        <p>
+          Assesses the actual contribution of a tool <em>after</em> execution based on observed
+          outcomes, pruning unproductive branches using real feedback.
+        </p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-num">3</span>
+        <h3>Bidirectional Pruning</h3>
+        <p>
+          Combines pre- and post-evaluation to eliminate unpromising branches, concentrating
+          computational budget on promising tool chains.
+        </p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-num">4</span>
+        <h3>Answer Predictor</h3>
+        <p>
+          Incorporates the tool trajectories with the highest reward found by the MCTS to produce
+          the final prediction.
+        </p>
+      </div>
+    </div>
+
+    <figure class="paper-figure reveal">
+      <img src="static/paper/comparison.png" alt="Concept comparison on a street photo asking how many wheels are in total: greedy-based planning commits to a single tool chain and answers incorrectly; search-based planning explores more tool branches but still returns a wrong count; ToolTree prunes branches before (pre-pruning) and after (post-pruning) execution and answers correctly.">
+      <figcaption>Comparison of ToolTree with greedy search and search-based tool planning. ToolTree chooses
+        the optimal tool trajectory and answers correctly with bidirectional pruning.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= Case study ================= -->
+<section id="case-study" class="section-alt">
+  <div class="container">
+    <h2>Case Study</h2>
+    <span class="band-label">Qualitative case studies from the paper</span>
+    <div class="case-figure reveal">
+      <img src="static/paper/case_study.png" alt="Iterative inferencing on a road-sign query asking for the distance in miles: early iterations read the kilometre figure off the sign and return it unchanged for a low post-evaluation reward; later iterations add retrieval and unit-conversion tools, the reward rises, and the final iteration answers in miles.">
+    </div>
+    <p class="case-text reveal">
+      The query asks how many <em>miles</em> the journey is, while the road sign in the image gives the
+      distance in kilometres. In early iterations the agent simply reads the kilometre figure off the
+      sign and returns it unchanged, earning a low post-evaluation reward. Across later iterations the
+      search brings in retrieval and unit-conversion tools, the post-evaluation reward rises, and the
+      final trajectory converts the distance and answers in miles.
+    </p>
+    <figure class="paper-figure reveal">
+      <div class="figure-stack">
+        <img src="static/paper/case_study_medical.png" alt="Case study (a): a radiology image question about lung cancer risk — greedy search relies on generic image captioning and heuristic search on shallow heuristics, both missing the finding, while the MCTS-planned trajectory orchestrates domain-specific imaging tools and detects the risk.">
+        <img src="static/paper/case_study_reasoning.png" alt="Case study (b): a multi-hop knowledge reasoning question about the building seen behind an amusement area — greedy search and heuristic search answer from broad scene cues and the most prominent text, while the MCTS-planned trajectory chains recognition and search tools to identify the building correctly.">
+      </div>
+      <figcaption>Two qualitative case studies showcasing ToolTree&#8217;s iterative tool orchestration on
+        (a) a radiology image question and (b) a multi-hop knowledge reasoning task.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= Results ================= -->
+<section id="results">
+  <div class="container">
+    <h2>Results</h2>
+    <p>
+      ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both closed-set and
+      open-set tool planning scenarios, with an average gain of ~10% over existing methods.
+    </p>
+
+    <div class="table-wrap reveal">
+      <table class="results">
+        <thead>
+          <tr><th>Benchmark</th><th>Setting</th><th>Tasks &amp; Tools</th><th>Official source</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GTA</td><td>Closed-set</td><td>229 real-world tasks, 14 executable tools</td><td><a href="https://github.com/open-compass/GTA" target="_blank" rel="noopener">open-compass/GTA</a> &#183; <a href="https://huggingface.co/datasets/Jize1/GTA" target="_blank" rel="noopener">HF dataset</a></td></tr>
+          <tr><td>m&amp;m</td><td>Closed-set</td><td>882 human-verified multi-step multimodal tasks, 33 tools</td><td><a href="https://github.com/RAIVNLab/mnms" target="_blank" rel="noopener">RAIVNLab/mnms</a> &#183; <a href="https://huggingface.co/datasets/zixianma/mnms" target="_blank" rel="noopener">HF dataset</a></td></tr>
+          <tr><td>ToolBench</td><td>Open-set</td><td>16,464 real-world REST APIs (RapidAPI)</td><td><a href="https://github.com/OpenBMB/ToolBench" target="_blank" rel="noopener">OpenBMB/ToolBench</a></td></tr>
+          <tr><td>RestBench</td><td>Open-set</td><td>TMDB &amp; Spotify REST scenarios</td><td><a href="https://github.com/Yifan-Song793/RestGPT" target="_blank" rel="noopener">Yifan-Song793/RestGPT</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="table-note reveal">
+      This repository ships no benchmark data; each benchmark is downloaded from its official source.
+    </p>
+
+  </div>
+</section>
+
+<!-- ================= Ablation ================= -->
+<section id="ablation" class="section-alt">
+  <div class="container">
+    <h2>Pruning Ablation</h2>
+
+    <div class="ablation-block reveal">
+      <figure class="paper-figure figure-medium">
+        <img src="static/paper/ablation_pruning.png" alt="Two box plots comparing ToolTree against variants without pre-pruning, without post-pruning, and without both: the number of rollouts and the number of expanded nodes are lowest for full ToolTree and grow as pruning stages are disabled.">
+      </figure>
+      <p class="takeaway">Disabling pre-pruning, post-pruning, or both consistently increases the number of
+        rollouts and expanded nodes, confirming that bidirectional pruning concentrates the computational
+        budget on promising tool chains.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BibTeX ================= -->
+<section id="bibtex">
+  <div class="container">
+    <h2>BibTeX</h2>
+    <div class="bibtex-box reveal">
+      <button class="copy-btn" id="copy-btn" type="button">Copy</button>
+      <pre id="bibtex-text">@inproceedings{yang2026tooltree,
+title={ToolTree: Efficient {LLM} Tool Planning via Dual-Feedback Monte Carlo Tree Search and Bidirectional Pruning},
+author={Shuo Yang and Caren Han and Yihao Ding and Shuhe Wang and Eduard Hovy},
+booktitle={The Fourteenth International Conference on Learning Representations},
+year={2026},
+url={https://openreview.net/forum?id=Ef5O9gNNLE}
+}</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    &#169; 2026 the authors &#183; The University of Melbourne &#183; The University of Western Australia &#183; Code released under the MIT License.
+  </div>
+</footer>
+
+<script>
+/* Sticky section nav: slides in once the hero has scrolled out of view. */
+(function () {
+  var hero = document.getElementById('top');
+  var nav = document.getElementById('topnav');
+  if (!hero || !nav || !('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    nav.classList.toggle('visible', !entries[0].isIntersecting);
+  }, { rootMargin: '-56px 0px 0px 0px' });
+  io.observe(hero);
+})();
+
+/* Scroll-reveal: fade/lift sections in as they enter the viewport.
+   Elements are only hidden when <html> carries the .js class (added in <head>),
+   so content stays visible with JS disabled; reduced-motion is handled in CSS. */
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  var i;
+  if (!('IntersectionObserver' in window)) {
+    for (i = 0; i < els.length; i++) els[i].classList.add('revealed');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) {
+        en.target.classList.add('revealed');
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+  for (i = 0; i < els.length; i++) io.observe(els[i]);
+})();
+
+/* Lightbox: click (or Enter/Space) on a paper figure opens it enlarged; ESC / click closes. */
+(function () {
+  var imgs = document.querySelectorAll('figure.paper-figure img, .case-figure img');
+  if (!imgs.length) return;
+  var overlay = null, big = null, lastFocus = null;
+
+  function build() {
+    overlay = document.createElement('div');
+    overlay.className = 'lightbox';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Enlarged figure');
+    big = document.createElement('img');
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'lightbox-close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Close enlarged figure');
+    closeBtn.innerHTML = '&#215;';
+    overlay.appendChild(big);
+    overlay.appendChild(closeBtn);
+    overlay.addEventListener('click', close);
+    document.body.appendChild(overlay);
+  }
+  function open(img) {
+    if (!overlay) build();
+    lastFocus = img;
+    big.src = img.currentSrc || img.src;
+    big.alt = img.alt || '';
+    overlay.classList.add('open');
+    document.body.classList.add('no-scroll');
+    overlay.querySelector('.lightbox-close').focus();
+  }
+  function close() {
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+    document.body.classList.remove('no-scroll');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.key === 'Esc') close();
+  });
+  Array.prototype.forEach.call(imgs, function (img) {
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('role', 'button');
+    img.addEventListener('click', function () { open(img); });
+    img.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        open(img);
+      }
+    });
+  });
+})();
+
+/* BibTeX copy button. */
+(function () {
+  var btn = document.getElementById('copy-btn');
+  var pre = document.getElementById('bibtex-text');
+  if (!btn || !pre) return;
+
+  function flash(ok) {
+    btn.textContent = ok ? 'Copied!' : 'Copy failed — select the text manually';
+    setTimeout(function () { btn.textContent = 'Copy'; }, 2000);
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    flash(ok);
+  }
+
+  btn.addEventListener('click', function () {
+    var text = pre.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { flash(true); },
+        function () { fallbackCopy(text); }
+      );
+    } else {
+      fallbackCopy(text);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
