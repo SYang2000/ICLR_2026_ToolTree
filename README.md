@@ -11,6 +11,7 @@
 
 <p align="center">
   <a href="https://openreview.net/forum?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/ICLR_2026-Paper-B31B1B?style=for-the-badge" alt="Paper (ICLR 2026)"></a>
+  <a href="https://arxiv.org/abs/2603.12740"><img src="https://img.shields.io/badge/arXiv-2603.12740-B31B1B?style=for-the-badge&logo=arxiv" alt="arXiv"></a>
   <a href="https://openreview.net/pdf?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/Paper-PDF-475569?style=for-the-badge" alt="Paper PDF"></a>
 </p>
 
@@ -30,6 +31,8 @@
 ---
 
 ## 💡 News
+
+**[2026.07.05]** The ToolTree paper is now on [arXiv](https://arxiv.org/abs/2603.12740)!
 
 **[2026.07.05]** The [**project page**](https://syang2000.github.io/ICLR_2026_ToolTree/) and an [**🎮 interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html) are now live!
 
@@ -97,7 +100,7 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
 
 ## 🎮 Interactive Demo
 
-Step through two real GTA cases rollout by rollout in the [**interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html). Every step shows what the search actually did — candidate argument drafts with pre-evaluation scores (including pruned branches), real tool outputs from execution, post-evaluation, and Q/N backpropagation. All values on the page are taken verbatim from a logged run of this repository in real tool-execution mode.
+Step through three real GTA cases rollout by rollout in the [**interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html) — including an extended 11-rollout search on a 3-step task. Every step shows what the search actually did — candidate argument drafts with pre-evaluation scores (including pruned branches), real tool outputs from execution, post-evaluation, and Q/N backpropagation. All values on the page are taken verbatim from logged runs of this repository in real tool-execution mode.
 
 ## ⚙️ Installation
 
@@ -158,6 +161,12 @@ bash scripts/run_mm.sh
 ✅ Behavior test suite (32 tests).
 
 🚧 Planned: open-set track (ToolBench, RestBench).
+
+## 🧭 Roadmap
+
+- 🚧 Open-set track loaders (ToolBench, RestBench).
+- ⬜ Additional real tool backends in `src/tools/real_tools.py`.
+- ⬜ Adapters for more tool-planning benchmarks.
 
 ## 📋 Release Notes / Scope
 
@@ -229,7 +238,17 @@ url={https://openreview.net/forum?id=Ef5O9gNNLE}
 }
 ```
 
+## 🌟 Star History
 
+<p align="center">
+  <a href="https://www.star-history.com/#SYang2000/ICLR_2026_ToolTree&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=SYang2000/ICLR_2026_ToolTree&type=Date&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=SYang2000/ICLR_2026_ToolTree&type=Date" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=SYang2000/ICLR_2026_ToolTree&type=Date" />
+    </picture>
+  </a>
+</p>
 
 ## License
 

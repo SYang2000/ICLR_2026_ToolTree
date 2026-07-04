@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ToolTree — Interactive Case Walkthrough</title>
-<meta name="description" content="Step through real ToolTree search traces on two GTA tasks: candidate drafts, pre/post evaluation, bidirectional pruning, real tool outputs, and Q/N backpropagation.">
+<meta name="description" content="Step through real ToolTree search traces on three GTA tasks: candidate drafts, pre/post evaluation, bidirectional pruning, real tool outputs, and Q/N backpropagation.">
 <link rel="icon" href="data:,">
 <style>
   :root {
@@ -157,7 +157,7 @@
 <div class="wrap">
   <header>
     <h1>ToolTree — Interactive Case Walkthrough</h1>
-    <div class="sub">Real execution traces from this repository (real tool-execution mode) on two GTA tasks:
+    <div class="sub">Real execution traces from this repository (real tool-execution mode) on three GTA tasks:
       step through each rollout — candidate drafts, pre-evaluation, execution with real tool outputs,
       post-evaluation, pruning, and Q/N backpropagation.</div>
     <div class="navlinks">
@@ -167,11 +167,14 @@
     </div>
     <div class="banner">
       <b>Provenance:</b> every candidate draft, score (r_pre / r_post), Q/N value, tool output, and final
-      answer below is taken verbatim from a logged run of this repository on 5 GTA tasks with
+      answer below is taken verbatim from two logged runs of this repository — 5 GTA tasks (Cases 1&ndash;2)
+      and 4 GTA tasks with 3&ndash;4-step reference plans (Case 3) — both with
       <code>tool_execution: real</code> (seed 42, &tau;<sub>pre</sub> 0.3, &tau;<sub>post</sub> 0.4,
-      c 1.4, max 40 rollouts). Long OCR outputs are truncated to 300 characters and flagged. Failed tool
-      calls (e.g. a tool without a real backend) are shown verbatim — post-evaluation prunes those
-      branches. Task images are referenced by their dataset-relative paths and are not embedded here.
+      c 1.4, max 40 rollouts). Long tool outputs are truncated to 300 characters and flagged. Failed tool
+      calls (e.g. a tool without a real backend, or a malformed argument draft) are shown verbatim —
+      post-evaluation prunes those branches; one error message that echoed a local filesystem path has
+      that path masked and is flagged. Task images are referenced by their dataset-relative paths and are
+      not embedded here.
     </div>
   </header>
 
@@ -204,8 +207,8 @@
     <div class="card" id="stepPanel"></div>
 
     <footer>
-      Data source: <code>static/demo_data.js</code>, generated from the audit log of a real-execution
-      validation run of this codebase (per-rollout AUDIT events, LLM traffic, and final results).
+      Data source: <code>static/demo_data.js</code>, generated from the audit logs of two real-execution
+      validation runs of this codebase (per-rollout AUDIT events, LLM traffic, and final results).
       &middot; <a href="index.html">Project page</a>
       &middot; <a href="https://github.com/SYang2000/ICLR_2026_ToolTree" target="_blank" rel="noopener">GitHub repo</a>
     </footer>
@@ -251,11 +254,37 @@
     return "<span class='badge gray'>dedup &middot; duplicate action</span>";
   }
 
+  function candTable(cands) {
+    var h = "<table class='cands'><tr><th>tool</th><th>argument draft</th><th>r_pre</th><th>outcome</th></tr>";
+    cands.forEach(function (c) {
+      h += "<tr><td><code>" + esc(c.tool) + "</code></td><td>" +
+        (c.args ? args(c.args) : "&mdash;") + "</td><td class='num'>" +
+        (c.r_pre == null ? "&mdash;" : num(c.r_pre)) + "</td><td>" +
+        statusBadge(c.status) + "</td></tr>";
+    });
+    return h + "</table>";
+  }
+
   function renderRollout(s, total) {
     var h = "<div class='stephead'><span class='sid'>Rollout " + s.rollout + " of " +
       total + "</span>";
     if (s.post_pruned) h += "<span class='badge bad'>branch post-pruned</span>";
     h += "</div>";
+
+    if (s.discovery) {
+      s.discovery.forEach(function (d) {
+        h += "<span class='seclabel'>DISCOVERY PASS &mdash; CONSUMES NO ROLLOUT BUDGET</span>";
+        h += "<div class='secline'>Selection first landed on leaf <code>" + esc(d.selected.action) +
+          "</code> (Q=" + num(d.selected.Q) + ", N=" + d.selected.N + ", r_pre=" +
+          num(d.selected.r_pre) + "), but its expansion produced no usable child:</div>";
+        h += candTable(d.candidates);
+        if (d.exhausted) {
+          h += "<div class='secline'><code>" + esc(d.exhausted.node) +
+            "</code> is marked exhausted (depth " + d.exhausted.depth +
+            ") and selection re-runs.</div>";
+        }
+      });
+    }
 
     var sel = s.selected;
     h += "<div class='secline'><b>Selection:</b> leaf <code>" + esc(sel.action) + "</code> " +
@@ -268,14 +297,7 @@
     if (s.candidates.length) {
       h += "<span class='seclabel'>EXPANSION &mdash; CANDIDATES &amp; PRE-EVALUATION (&tau;<sub>pre</sub> = " +
         num(D.meta.tau_pre) + ")</span>";
-      h += "<table class='cands'><tr><th>tool</th><th>argument draft</th><th>r_pre</th><th>outcome</th></tr>";
-      s.candidates.forEach(function (c) {
-        h += "<tr><td><code>" + esc(c.tool) + "</code></td><td>" +
-          (c.args ? args(c.args) : "&mdash;") + "</td><td class='num'>" +
-          (c.r_pre == null ? "&mdash;" : num(c.r_pre)) + "</td><td>" +
-          statusBadge(c.status) + "</td></tr>";
-      });
-      h += "</table>";
+      h += candTable(s.candidates);
     }
 
     if (s.executed) {
@@ -286,6 +308,10 @@
       if (ex.truncated) {
         h += "<div class='trunc'>output truncated to " + D.meta.trunc_chars +
           " characters for display; the full text is in the run artifacts</div>";
+      }
+      if (ex.redacted) {
+        h += "<div class='trunc'>a local filesystem path in this message is masked as " +
+          "&lt;local dataset dir&gt;; everything else is verbatim</div>";
       }
       h += "<span class='seclabel'>POST-EVALUATION (&tau;<sub>post</sub> = " + num(s.tau_post) + ")</span>";
       h += "<div class='secline'>r_post = <b>" + num(s.r_post) + "</b> &rarr; " +
@@ -306,6 +332,24 @@
   }
 
   function renderTerminal(s) {
+    if (s.event === "early_stop") {
+      var eh = "<div class='stephead'><span class='sid'>Search terminated</span>" +
+        "<span class='badge gray'>early_stop &middot; rollouts_used=" + s.rollouts_used + "</span></div>";
+      eh += "<div class='secline'>The best root Q has plateaued: baseline " + num(s.baseline) +
+        " vs best recent " + num(s.best_recent) + " &mdash; improvement " + num(s.improvement) +
+        " &lt; &delta; = " + num(s.delta) + " over the last " + s.patience + " rollouts.</div>";
+      if (s.exhausted.length) {
+        eh += "<div class='secline'>Nodes marked exhausted during the search:</div><ul class='plain'>";
+        s.exhausted.forEach(function (e) {
+          eh += "<li><code>" + esc(e.node) + "</code> (depth " + e.depth + ")</li>";
+        });
+        eh += "</ul>";
+      }
+      eh += "<div class='secline'>The early-stopping rule halts the search at rollout " +
+        s.rollouts_used + " &mdash; well under the budget of " + D.meta.max_rollouts +
+        " rollouts.</div>";
+      return eh;
+    }
     var h = "<div class='stephead'><span class='sid'>Search terminated</span>" +
       "<span class='badge gray'>search_exhausted &middot; rollouts_used=" + s.rollouts_used + "</span></div>";
     if (s.dedups.length) {
