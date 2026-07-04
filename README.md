@@ -20,6 +20,7 @@
 
 <p align="center">
   <a href="https://syang2000.github.io/ICLR_2026_ToolTree/demo.html"><img src="https://img.shields.io/badge/%F0%9F%8E%AE_Playground-Interactive_Case_Walkthrough-00B894?style=for-the-badge" alt="Interactive demo"></a>
+  <a href="https://huggingface.co/spaces/Pleuron/ToolTree"><img src="https://img.shields.io/badge/%F0%9F%A4%97_Hugging_Face-Space-FFD21E?style=for-the-badge" alt="Hugging Face Space"></a>
 </p>
 
 <p align="center">
