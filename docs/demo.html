@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ToolTree — Interactive Case Walkthrough</title>
+<meta name="description" content="Step through real ToolTree search traces on two GTA tasks: candidate drafts, pre/post evaluation, bidirectional pruning, real tool outputs, and Q/N backpropagation.">
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #5b6a7c;
+    --line: #dde4ec;
+    --bg: #f6f8fa;
+    --card: #ffffff;
+    --accent: #1f5fbf;
+    --ok: #1e8a4c;
+    --bad: #b3402f;
+    --warn: #8a6d1e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: #eef2f7; border-radius: 4px; padding: 0 4px; font-size: .86em; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 20px 18px 60px; }
+  header h1 { font-size: 1.45rem; margin: 8px 0 4px; }
+  header .sub { color: var(--muted); font-size: .92rem; }
+  .navlinks { font-size: .9rem; margin-top: 6px; }
+  .navlinks a + a { margin-left: 14px; }
+  .banner {
+    margin: 14px 0 18px;
+    padding: 10px 14px;
+    background: #fff7e8;
+    border: 1px solid #ecd9ac;
+    border-radius: 8px;
+    font-size: .88rem;
+    color: #6a5320;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  /* case tabs */
+  .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tabs button {
+    font: inherit;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+  }
+  .tabs button:hover { border-color: var(--accent); color: var(--accent); }
+  .tabs button.active { border-color: var(--accent); background: #eaf1fb; font-weight: 600; }
+  .query {
+    border-left: 3px solid var(--accent);
+    background: #f2f6fc;
+    padding: 8px 12px;
+    margin: 0 0 4px;
+    font-size: .92rem;
+    border-radius: 0 6px 6px 0;
+  }
+  .query .who { font-weight: 700; font-size: .78rem; color: var(--accent); display: block; }
+  /* controls */
+  .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .controls button {
+    font: inherit;
+    padding: 5px 14px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .controls input[type=range] { flex: 1; min-width: 180px; accent-color: var(--accent); }
+  .controls .steplabel { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 96px; }
+  .hint { color: var(--muted); font-size: .8rem; margin-top: 6px; }
+  /* step panel */
+  .stephead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .stephead .sid { font-weight: 700; font-size: 1.05rem; }
+  .badge {
+    display: inline-block;
+    padding: 1px 10px;
+    border-radius: 6px;
+    font-size: .76rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    white-space: nowrap;
+  }
+  .badge.ok   { background: #e2f3e8; color: var(--ok);  border: 1px solid #bcdfc9; }
+  .badge.bad  { background: #f7e8e5; color: var(--bad); border: 1px solid #e6c5be; }
+  .badge.gray { background: #eef1f5; color: var(--muted); border: 1px solid #d8dfe7; }
+  .secline { margin: 8px 0; font-size: .92rem; }
+  .seclabel { font-weight: 700; font-size: .78rem; color: var(--accent); letter-spacing: .04em; display: block; margin: 12px 0 4px; }
+  table.cands { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  table.cands th, table.cands td {
+    text-align: left;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.cands th { color: var(--muted); font-weight: 600; font-size: .8rem; }
+  table.cands td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  pre.out {
+    background: #0f1720;
+    color: #cfd8e3;
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-size: .8rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 6px 0;
+  }
+  pre.out.err { color: #f0a89c; }
+  .trunc { color: var(--warn); font-size: .78rem; }
+  ul.plain { margin: 4px 0; padding-left: 20px; font-size: .9rem; }
+  .answerbox {
+    border-left: 3px solid var(--ok);
+    background: #f0f9f3;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 8px 0;
+    font-size: .95rem;
+  }
+  .stats { display: flex; gap: 22px; flex-wrap: wrap; font-size: .9rem; margin: 6px 0 2px; }
+  .stats .k { color: var(--muted); }
+  .stats .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+  #error {
+    display: none;
+    background: #f7e8e5;
+    border: 1px solid #e6c5be;
+    color: var(--bad);
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-top: 14px;
+  }
+  footer { color: var(--muted); font-size: .8rem; margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>ToolTree — Interactive Case Walkthrough</h1>
+    <div class="sub">Real execution traces from this repository (real tool-execution mode) on two GTA tasks:
+      step through each rollout — candidate drafts, pre-evaluation, execution with real tool outputs,
+      post-evaluation, pruning, and Q/N backpropagation.</div>
+    <div class="navlinks">
+      <a href="index.html">&larr; Project page</a>
+      <a href="https://github.com/SYang2000/ICLR_2026_ToolTree" target="_blank" rel="noopener">GitHub repo</a>
+      <a href="https://openreview.net/forum?id=Ef5O9gNNLE" target="_blank" rel="noopener">Paper (ICLR 2026)</a>
+    </div>
+    <div class="banner">
+      <b>Provenance:</b> every candidate draft, score (r_pre / r_post), Q/N value, tool output, and final
+      answer below is taken verbatim from a logged run of this repository on 5 GTA tasks with
+      <code>tool_execution: real</code> (seed 42, &tau;<sub>pre</sub> 0.3, &tau;<sub>post</sub> 0.4,
+      c 1.4, max 40 rollouts). Long OCR outputs are truncated to 300 characters and flagged. Failed tool
+      calls (e.g. a tool without a real backend) are shown verbatim — post-evaluation prunes those
+      branches. Task images are referenced by their dataset-relative paths and are not embedded here.
+    </div>
+  </header>
+
+  <div id="error">
+    Walkthrough data failed to load. This page needs <code>static/demo_data.js</code> next to it
+    (shipped in the repo under <code>docs/static/</code>). If you are viewing a copy of this file alone,
+    grab the full <code>docs/</code> directory from the
+    <a href="https://github.com/SYang2000/ICLR_2026_ToolTree" target="_blank" rel="noopener">GitHub repo</a>.
+  </div>
+
+  <noscript><p style="max-width:720px;margin:24px auto;padding:12px 16px;background:#fef3c7;border:1px solid #d97706;border-radius:8px;font-size:14px">This interactive walkthrough requires JavaScript. The search mechanism it illustrates is documented on the <a href="index.html">project page</a> and in the <a href="https://github.com/SYang2000/ICLR_2026_ToolTree">repository README</a>.</p></noscript>
+
+  <div id="app" style="display:none">
+    <div class="tabs" id="tabs"></div>
+
+    <div class="card">
+      <div class="query"><span class="who">USER QUERY</span><span id="query"></span></div>
+    </div>
+
+    <div class="card">
+      <div class="controls">
+        <button id="btnPrev" title="previous step (&larr;)">&#9664; Prev</button>
+        <button id="btnNext" title="next step (&rarr;)">Next &#9654;</button>
+        <input type="range" id="slider" min="0" max="1" value="0" step="1">
+        <span class="steplabel" id="stepLabel"></span>
+      </div>
+      <div class="hint">Keyboard: &larr; / &rarr; step through the search.</div>
+    </div>
+
+    <div class="card" id="stepPanel"></div>
+
+    <footer>
+      Data source: <code>static/demo_data.js</code>, generated from the audit log of a real-execution
+      validation run of this codebase (per-rollout AUDIT events, LLM traffic, and final results).
+      &middot; <a href="index.html">Project page</a>
+      &middot; <a href="https://github.com/SYang2000/ICLR_2026_ToolTree" target="_blank" rel="noopener">GitHub repo</a>
+    </footer>
+  </div>
+</div>
+
+<script src="static/demo_data.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var D = window.DEMO_DATA;
+  if (!D || !D.cases || !D.cases.length) {
+    document.getElementById("error").style.display = "block";
+    return;
+  }
+  document.getElementById("app").style.display = "block";
+
+  var caseIdx = 0;
+  var stepIdx = 0;
+  var slider = document.getElementById("slider");
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function num(x) { return esc(String(x)); }
+  function args(a) { return "<code>" + esc(JSON.stringify(a)) + "</code>"; }
+
+  // ---------- tabs ----------
+  var tabsEl = document.getElementById("tabs");
+  D.cases.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.textContent = c.title;
+    b.addEventListener("click", function () { caseIdx = i; stepIdx = 0; render(); });
+    tabsEl.appendChild(b);
+  });
+
+  // ---------- step rendering ----------
+  function statusBadge(st) {
+    if (st === "kept") return "<span class='badge ok'>kept</span>";
+    if (st === "pre_pruned") return "<span class='badge bad'>pre-pruned</span>";
+    return "<span class='badge gray'>dedup &middot; duplicate action</span>";
+  }
+
+  function renderRollout(s, total) {
+    var h = "<div class='stephead'><span class='sid'>Rollout " + s.rollout + " of " +
+      total + "</span>";
+    if (s.post_pruned) h += "<span class='badge bad'>branch post-pruned</span>";
+    h += "</div>";
+
+    var sel = s.selected;
+    h += "<div class='secline'><b>Selection:</b> leaf <code>" + esc(sel.action) + "</code> " +
+      "(Q=" + num(sel.Q) + ", N=" + sel.N + ", r_pre=" + num(sel.r_pre) + ")";
+    if (s.realize) {
+      h += " &mdash; unvisited candidate; its stored argument draft is executed (<code>realize_leaf</code>)";
+    }
+    h += "</div>";
+
+    if (s.candidates.length) {
+      h += "<span class='seclabel'>EXPANSION &mdash; CANDIDATES &amp; PRE-EVALUATION (&tau;<sub>pre</sub> = " +
+        num(D.meta.tau_pre) + ")</span>";
+      h += "<table class='cands'><tr><th>tool</th><th>argument draft</th><th>r_pre</th><th>outcome</th></tr>";
+      s.candidates.forEach(function (c) {
+        h += "<tr><td><code>" + esc(c.tool) + "</code></td><td>" +
+          (c.args ? args(c.args) : "&mdash;") + "</td><td class='num'>" +
+          (c.r_pre == null ? "&mdash;" : num(c.r_pre)) + "</td><td>" +
+          statusBadge(c.status) + "</td></tr>";
+      });
+      h += "</table>";
+    }
+
+    if (s.executed) {
+      var ex = s.executed;
+      h += "<span class='seclabel'>EXECUTION &mdash; REAL TOOL OUTPUT</span>";
+      h += "<div class='secline'><b>" + esc(ex.tool) + "</b> " + args(ex.args) + "</div>";
+      h += "<pre class='out" + (ex.error ? " err" : "") + "'>" + esc(ex.output) + "</pre>";
+      if (ex.truncated) {
+        h += "<div class='trunc'>output truncated to " + D.meta.trunc_chars +
+          " characters for display; the full text is in the run artifacts</div>";
+      }
+      h += "<span class='seclabel'>POST-EVALUATION (&tau;<sub>post</sub> = " + num(s.tau_post) + ")</span>";
+      h += "<div class='secline'>r_post = <b>" + num(s.r_post) + "</b> &rarr; " +
+        (s.post_pruned ? "<span class='badge bad'>post-pruned</span>" : "<span class='badge ok'>kept</span>") +
+        "</div>";
+    }
+
+    if (s.backprop.length) {
+      h += "<span class='seclabel'>BACKPROPAGATION (reward " + num(s.backprop[0].reward) + ")</span>";
+      h += "<ul class='plain'>";
+      s.backprop.forEach(function (b) {
+        h += "<li><code>" + esc(b.node) + "</code> &rarr; Q=" + num(b.Q) + ", N=" + b.N + "</li>";
+      });
+      h += "</ul>";
+      h += "<div class='secline'><span class='badge gray'>best Q after rollout: " + num(s.best_q) + "</span></div>";
+    }
+    return h;
+  }
+
+  function renderTerminal(s) {
+    var h = "<div class='stephead'><span class='sid'>Search terminated</span>" +
+      "<span class='badge gray'>search_exhausted &middot; rollouts_used=" + s.rollouts_used + "</span></div>";
+    if (s.dedups.length) {
+      h += "<div class='secline'>Further expansion only produced duplicates of actions already on the path:</div><ul class='plain'>";
+      s.dedups.forEach(function (d) {
+        h += "<li><code>" + esc(d.tool) + "</code>" + (d.args ? " " + args(d.args) : "") +
+          " <span class='badge gray'>dedup</span></li>";
+      });
+      h += "</ul>";
+    } else {
+      h += "<div class='secline'>Every remaining candidate was pre-pruned, post-pruned, or a duplicate of an action already on the path.</div>";
+    }
+    h += "<div class='secline'>Nodes marked exhausted:</div><ul class='plain'>";
+    s.exhausted.forEach(function (e) {
+      h += "<li><code>" + esc(e.node) + "</code> (depth " + e.depth + ")</li>";
+    });
+    h += "</ul><div class='secline'>With no expandable leaf left, the search stops early &mdash; well under the budget of " +
+      D.meta.max_rollouts + " rollouts.</div>";
+    return h;
+  }
+
+  function renderFinal(s) {
+    var h = "<div class='stephead'><span class='sid'>Final trajectory &amp; answer</span>" +
+      "<span class='badge ok'>highest-reward path</span></div>";
+    h += "<span class='seclabel'>FINAL PLAN</span><ul class='plain'>";
+    s.plan.forEach(function (p, i) {
+      h += "<li>" + (i + 1) + ". <code>" + esc(p.tool) + "</code> " + args(p.args) + "</li>";
+    });
+    h += "</ul>";
+    h += "<span class='seclabel'>FINAL ANSWER</span>";
+    h += "<div class='answerbox'>" + esc(s.answer) + "</div>";
+    h += "<div class='stats'>" +
+      "<span><span class='k'>final reward&nbsp;</span><span class='v'>" + num(s.reward) + "</span></span>" +
+      "<span><span class='k'>rollouts used&nbsp;</span><span class='v'>" + s.rollouts_used + "</span></span>" +
+      "</div>";
+    return h;
+  }
+
+  function render() {
+    var c = D.cases[caseIdx];
+    var steps = c.steps;
+    stepIdx = Math.max(0, Math.min(steps.length - 1, stepIdx));
+
+    Array.prototype.forEach.call(tabsEl.children, function (b, i) {
+      b.className = i === caseIdx ? "active" : "";
+    });
+    document.getElementById("query").textContent = c.query;
+
+    slider.max = steps.length - 1;
+    slider.value = stepIdx;
+    document.getElementById("stepLabel").textContent = "step " + (stepIdx + 1) + " / " + steps.length;
+
+    var s = steps[stepIdx];
+    var totalRollouts = steps.filter(function (x) { return x.type === "rollout"; }).length;
+    var html;
+    if (s.type === "rollout") html = renderRollout(s, totalRollouts);
+    else if (s.type === "terminal") html = renderTerminal(s);
+    else html = renderFinal(s);
+    document.getElementById("stepPanel").innerHTML = html;
+  }
+
+  function goto(i) { stepIdx = i; render(); }
+
+  document.getElementById("btnPrev").addEventListener("click", function () { goto(stepIdx - 1); });
+  document.getElementById("btnNext").addEventListener("click", function () { goto(stepIdx + 1); });
+  slider.addEventListener("input", function () { goto(parseInt(slider.value, 10)); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft") { goto(stepIdx - 1); e.preventDefault(); }
+    else if (e.key === "ArrowRight") { goto(stepIdx + 1); e.preventDefault(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

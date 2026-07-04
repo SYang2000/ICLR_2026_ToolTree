@@ -19,12 +19,24 @@
 </p>
 
 <p align="center">
+  <a href="https://syang2000.github.io/ICLR_2026_ToolTree/demo.html"><img src="https://img.shields.io/badge/%F0%9F%8E%AE_Playground-Interactive_Case_Walkthrough-00B894?style=for-the-badge" alt="Interactive demo"></a>
+</p>
+
+<p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2EA44F?style=flat-square" alt="License: MIT"></a>
 </p>
 
 ---
 
-## Overview
+## 💡 News
+
+**[2026.07.05]** The [**project page**](https://syang2000.github.io/ICLR_2026_ToolTree/) and an [**🎮 interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html) are now live!
+
+**[2026.07.05]** The complete **official implementation** of ToolTree is released — MCTS main loop, dual (pre/post) evaluation, bidirectional pruning, real tool-execution mode, and the behavior test suite.
+
+**[2026]** ToolTree is accepted at [**ICLR 2026**](https://openreview.net/forum?id=Ef5O9gNNLE)!
+
+## 🌟 Overview
 
 **ToolTree** is a novel Monte Carlo tree search-inspired planning paradigm for LLM agent tool planning. It explores possible tool usage trajectories using a **dual-stage LLM evaluation** and **bidirectional pruning** mechanism that enables the agent to make informed, adaptive decisions over extended tool-use sequences while pruning less promising branches before and after the tool execution.
 
@@ -41,7 +53,7 @@
   <em>Comparison of ToolTree with greedy search and search-based tool planning. ToolTree chooses the optimal tool trajectory and answers correctly with bidirectional pruning.</em>
 </p>
 
-## Architecture
+## 🏗️ Architecture
 
 <p align="center">
   <img src="assets/architecture.png" width="100%">
@@ -56,7 +68,7 @@
 - **Bidirectional Pruning**: Combines pre- and post-evaluation to eliminate unpromising branches, concentrating computational budget on promising tool chains.
 - **Answer Predictor**: Incorporates the tool trajectories with the highest reward found by the MCTS to produce the final prediction.
 
-## Results
+## 📊 Results
 
 ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both closed-set and open-set tool planning scenarios, with an average gain of ~10% over existing methods.
 
@@ -82,7 +94,11 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
 
 
 
-## Installation
+## 🎮 Interactive Demo
+
+Step through two real GTA cases rollout by rollout in the [**interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html). Every step shows what the search actually did — candidate argument drafts with pre-evaluation scores (including pruned branches), real tool outputs from execution, post-evaluation, and Q/N backpropagation. All values on the page are taken verbatim from a logged run of this repository in real tool-execution mode.
+
+## ⚙️ Installation
 
 ```bash
 git clone https://github.com/SYang2000/ICLR_2026_ToolTree.git
@@ -90,7 +106,7 @@ cd ICLR_2026_ToolTree
 pip install -r requirements.txt
 ```
 
-## Benchmarks
+## 📦 Benchmarks
 
 ToolTree is evaluated on four public benchmarks. This repository ships no benchmark
 data; download each from its official source and point the configs' `data_path` at it:
@@ -118,7 +134,7 @@ The loaders accept items with `query` / `tools` / `gold_plan` / `context` /
 `gold_answer` keys; see `src/evaluation/benchmarks.py::_normalize_item` for the full
 list of accepted aliases when converting a downloaded dataset.
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 # Run on GTA benchmark
@@ -128,7 +144,21 @@ bash scripts/run_gta.sh
 bash scripts/run_mm.sh
 ```
 
-## Release Notes / Scope
+## 📋 Supported Features
+
+✅ MCTS planning loop with dual (pre/post) evaluation and bidirectional pruning.
+
+✅ Plan-level ("step-by-step") and real tool-execution modes.
+
+✅ GTA & m&m closed-set pipelines with official data sources.
+
+✅ Deterministic caching, content-keyed judge memoization, early stopping.
+
+✅ Behavior test suite (32 tests).
+
+🚧 Planned: open-set track (ToolBench, RestBench).
+
+## 📋 Release Notes / Scope
 
 This is the **official implementation of ToolTree** (the MCTS loop, dual evaluation,
 bidirectional pruning, and answer prediction). Notes on this release:
@@ -144,7 +174,7 @@ bidirectional pruning, and answer prediction). Notes on this release:
   `judge_llm` in the YAML configs; for endpoints that reject the optional `extra_body`,
   set `enable_thinking_toggle: false` (see `src/llm/client.py`).
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 ICLR_2026_ToolTree/
@@ -184,7 +214,7 @@ ICLR_2026_ToolTree/
 └── README.md
 ```
 
-## Citation
+## 📜 Citation
 
 If you find this work useful, please cite our paper:
 
