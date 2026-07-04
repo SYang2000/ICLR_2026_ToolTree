@@ -1,0 +1,21 @@
+# Core dependencies. openai and pyyaml are unconditionally imported; numpy
+# is imported in a try/except in run.py (np seeding) — installed by default
+# so seeding is deterministic on a fresh install.
+openai>=1.0.0
+pyyaml>=6.0
+numpy>=1.24.0
+
+# Optional — real tool execution (config tool_execution: real); imported lazily
+# torch>=2.0.0
+# transformers>=4.36.0
+# easyocr>=1.7.0
+# sympy>=1.12
+# ddgs>=9.0.0
+# Pillow>=10.0.0     # required by the easyocr/transformers image pipelines
+
+# Optional — BM25 tool retrieval for the open-set track (not part of this
+# release); tool_registry falls back to keyword overlap when absent
+# rank-bm25>=0.2.2
+
+# Optional — only needed to host the planner/judge model locally
+# vllm>=0.6.0
