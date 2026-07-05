@@ -99,6 +99,12 @@ ToolTree achieves state-of-the-art performance across 4 benchmarks spanning both
 
 Step through three real GTA cases rollout by rollout in the [**interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html) — including an extended 11-rollout search on a 3-step task. Every step shows what the search actually did — candidate argument drafts with pre-evaluation scores (including pruned branches), real tool outputs from execution, post-evaluation, and Q/N backpropagation. All values on the page are taken verbatim from logged runs of this repository in real tool-execution mode.
 
+<p align="center">
+  <img src="docs/static/paper/case3_tree.svg" width="100%">
+  <br>
+  <em>Search tree of an 11-rollout case, reconstructed from the logged run: the selected trajectory is highlighted; pre-pruned, post-pruned, and duplicate-draft branches are shown as encountered.</em>
+</p>
+
 ## ⚙️ Installation
 
 ```bash
@@ -234,18 +240,6 @@ year={2026},
 url={https://openreview.net/forum?id=Ef5O9gNNLE}
 }
 ```
-
-## 🌟 Star History
-
-<p align="center">
-  <a href="https://www.star-history.com/#SYang2000/ICLR_2026_ToolTree&Date">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=SYang2000/ICLR_2026_ToolTree&type=Date&theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=SYang2000/ICLR_2026_ToolTree&type=Date" />
-      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=SYang2000/ICLR_2026_ToolTree&type=Date" />
-    </picture>
-  </a>
-</p>
 
 ## License
 
