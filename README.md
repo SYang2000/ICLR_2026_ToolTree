@@ -12,7 +12,6 @@
 <p align="center">
   <a href="https://openreview.net/forum?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/ICLR_2026-Paper-B31B1B?style=for-the-badge" alt="Paper (ICLR 2026)"></a>
   <a href="https://arxiv.org/abs/2603.12740"><img src="https://img.shields.io/badge/arXiv-2603.12740-B31B1B?style=for-the-badge&logo=arxiv" alt="arXiv"></a>
-  <a href="https://openreview.net/pdf?id=Ef5O9gNNLE"><img src="https://img.shields.io/badge/Paper-PDF-475569?style=for-the-badge" alt="Paper PDF"></a>
 </p>
 
 <p align="center">
@@ -31,8 +30,6 @@
 ---
 
 ## 💡 News
-
-**[2026.07.05]** The ToolTree paper is now on [arXiv](https://arxiv.org/abs/2603.12740)!
 
 **[2026.07.05]** The [**project page**](https://syang2000.github.io/ICLR_2026_ToolTree/) and an [**🎮 interactive case walkthrough**](https://syang2000.github.io/ICLR_2026_ToolTree/demo.html) are now live!
 

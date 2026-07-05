@@ -40,7 +40,6 @@
     <nav class="button-row" aria-label="Paper links">
       <a class="btn" href="https://openreview.net/forum?id=Ef5O9gNNLE" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Paper</a>
       <a class="btn" href="https://arxiv.org/abs/2603.12740" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>arXiv</a>
-      <a class="btn" href="https://openreview.net/pdf?id=Ef5O9gNNLE" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF</a>
       <a class="btn" href="https://github.com/SYang2000/ICLR_2026_ToolTree" target="_blank" rel="noopener"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Code</a>
       <a class="btn" href="demo.html"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" stroke="none"><polygon points="7 4 20 12 7 20 7 4"/></svg>Demo</a>
       <a class="btn btn-ghost" href="#bibtex"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>BibTeX</a>
@@ -110,6 +109,13 @@
       <figcaption>Architecture overview of ToolTree. An input query is processed sequentially via iterative
         dual evaluation-guided Monte Carlo Tree Search, including selection, pre-evaluation, expansion,
         execution, post-evaluation and backward-propagation.</figcaption>
+    </figure>
+
+    <figure class="paper-figure reveal">
+      <img src="static/paper/tooltree_search.svg" alt="Schematic tree of tool calls for a flight-search query: from the user query, candidate tool calls branch out with value scores, the low-scoring branches are drawn dashed as pruned, and one bold path leads to a final answer bar.">
+      <figcaption>Illustrative schematic of the search over tool-call trajectories: each node is a candidate
+        tool call scored by the value estimate, low-value branches are pruned, and the highest-reward
+        trajectory is selected as the final plan.</figcaption>
     </figure>
 
     <div class="mech-grid mech-grid-4 reveal stagger">

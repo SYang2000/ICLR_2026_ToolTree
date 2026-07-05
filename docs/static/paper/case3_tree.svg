@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1000" viewBox="0 0 1240 1000" font-family="system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="rootGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4F46E5"/><stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.10"/>
+    </filter>
+    <marker id="mWin" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#059669"/>
+    </marker>
+    <marker id="mExp" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#94A3B8"/>
+    </marker>
+    <marker id="mPru" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#CBD5E1"/>
+    </marker>
+    <marker id="mBad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#EF4444"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="1000" fill="#F8FAFC"/>
+  <text x="40" y="52" font-size="25" font-weight="700" fill="#0F172A">ToolTree Search Tree · Interactive Demo Case 3</text>
+  <text x="40" y="78" font-size="13.5" fill="#64748B">Reconstructed from a logged real tool-execution run · 11 rollouts, early stop · final trajectory reward 0.9</text>
+  <!-- edges -->
+  <path d="M 540 168 C 540 220, 560 188, 560 233" fill="none" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 540 168 C 540 220, 560 188, 560 233" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#mWin)"/>
+  <path d="M 760 168 C 760 220, 1064 188, 1064 233" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 660 168 C 660 220, 810 188, 810 233" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 520 324 C 520 376, 340 348, 340 393" fill="none" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 520 324 C 520 376, 340 348, 340 393" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#mWin)"/>
+  <path d="M 600 324 C 600 376, 780 348, 780 393" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 280 484 C 280 536, 120 508, 120 553" fill="none" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 280 484 C 280 536, 120 508, 120 553" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#mWin)"/>
+  <path d="M 340 484 C 340 536, 340 508, 340 553" fill="none" stroke="#FCA5A5" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#mBad)"/>
+  <path d="M 400 484 C 400 536, 560 508, 560 553" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 1010 324 C 1010 376, 977 348, 977 393" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#mPru)"/>
+  <path d="M 1120 324 C 1120 376, 1152 348, 1152 393" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 780 484 C 780 536, 780 508, 780 553" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 160 644 C 160 696, 200 668, 200 713" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#mPru)"/>
+  <path d="M 560 644 C 560 696, 560 668, 560 713" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#mExp)"/>
+  <path d="M 55 644 C 52 700, 52 780, 52 849" fill="none" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 55 644 C 52 700, 52 780, 52 849" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#mWin)"/>
+  <g filter="url(#soft)"><rect x="440" y="104" width="360" height="64" rx="14" fill="url(#rootGrad)"/></g>
+  <text x="620" y="131" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">User Query</text>
+  <text x="620" y="152" font-size="11.5" fill="#E0E7FF" text-anchor="middle">&quot;How far can the animal in the picture fly in…&quot;</text>
+  <!-- nodes -->
+  <g filter="url(#soft)"><rect x="455.0" y="240" width="210" height="84" rx="12" fill="#FFFFFF" stroke="#059669" stroke-width="2.4"/></g>
+  <text x="469.0" y="270" font-size="13" font-weight="700" fill="#065F46" font-family="ui-monospace, Menlo, Consolas, monospace">ImageDescription</text>
+  <text x="469.0" y="290" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">image: image/image_395.jpg</text>
+  <rect x="594.0" y="230" width="61" height="21" rx="10.5" fill="#059669"/>
+  <text x="624" y="244.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.8</text>
+  <rect x="533.0" y="230" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="560" y="244.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.8</text>
+  <g filter="url(#soft)"><rect x="959.0" y="240" width="210" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="973.0" y="270" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">GoogleSearch</text>
+  <text x="973.0" y="290" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">query: How far can the anima…</text>
+  <rect x="1098.0" y="230" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="1128" y="244.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.5</text>
+  <rect x="1037.0" y="230" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="1064" y="244.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.5</text>
+  <g filter="url(#soft)"><rect x="705.0" y="240" width="210" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="719.0" y="270" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">Calculator</text>
+  <text x="719.0" y="290" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">expression: 2.5 * 100</text>
+  <rect x="844.0" y="230" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="874" y="244.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.5</text>
+  <rect x="783.0" y="230" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="810" y="244.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.3</text>
+  <g filter="url(#soft)"><rect x="240.0" y="400" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#059669" stroke-width="2.4"/></g>
+  <text x="254.0" y="430" font-size="13" font-weight="700" fill="#065F46" font-family="ui-monospace, Menlo, Consolas, monospace">GoogleSearch</text>
+  <text x="254.0" y="450" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">query: How far can a bald e…</text>
+  <rect x="369.0" y="390" width="61" height="21" rx="10.5" fill="#059669"/>
+  <text x="400" y="404.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.7</text>
+  <rect x="308.0" y="390" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="336" y="404.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.8</text>
+  <g filter="url(#soft)"><rect x="680.0" y="400" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="694.0" y="430" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">Calculator</text>
+  <text x="694.0" y="450" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">expression: 2.5 * 150</text>
+  <rect x="809.0" y="390" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="840" y="404.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.5</text>
+  <rect x="748.0" y="390" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="776" y="404.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.5</text>
+  <g filter="url(#soft)"><rect x="20.0" y="560" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#059669" stroke-width="2.4"/></g>
+  <text x="34.0" y="590" font-size="13" font-weight="700" fill="#065F46" font-family="ui-monospace, Menlo, Consolas, monospace">Calculator</text>
+  <text x="34.0" y="610" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">expression: 2.5 * 45</text>
+  <text x="34.0" y="629" font-size="10" fill="#94A3B8">marked exhausted (depth 3)</text>
+  <rect x="149.0" y="550" width="61" height="21" rx="10.5" fill="#059669"/>
+  <text x="180" y="564.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.9</text>
+  <rect x="88.0" y="550" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="116" y="564.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.8</text>
+  <g filter="url(#soft)"><rect x="240.0" y="560" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#F87171" stroke-width="1.8" stroke-dasharray="7 4"/></g>
+  <text x="254.0" y="590" font-size="13" font-weight="700" fill="#B91C1C" font-family="ui-monospace, Menlo, Consolas, monospace">✗ ImageDescription</text>
+  <text x="254.0" y="610" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">expression: 2.5 * 45</text>
+  <text x="254.0" y="629" font-size="10" fill="#B91C1C">invocation_failed · post-pruned</text>
+  <rect x="369.0" y="550" width="61" height="21" rx="10.5" fill="#DC2626"/>
+  <text x="400" y="564.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.0</text>
+  <rect x="308.0" y="550" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="336" y="564.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.8</text>
+  <g filter="url(#soft)"><rect x="460.0" y="560" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="474.0" y="590" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">GoogleSearch</text>
+  <text x="474.0" y="610" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">query: How far can a bald e…</text>
+  <rect x="589.0" y="550" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="620" y="564.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.7</text>
+  <rect x="528.0" y="550" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="556" y="564.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.5</text>
+  <g opacity="0.72">
+  <rect x="894.5" y="400" width="165" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="908.5" y="430" font-size="13" font-weight="700" fill="#94A3B8" font-family="ui-monospace, Menlo, Consolas, monospace">✗ ImageDescription</text>
+  <text x="908.5" y="450" font-size="10.5" fill="#CBD5E1" font-family="ui-monospace, Menlo, Consolas, monospace">image/image_395.jpg</text>
+  <text x="908.5" y="469" font-size="10" fill="#B91C1C">pre-pruned: r_pre &lt; 0.3</text>
+  <rect x="994.5" y="390" width="55" height="21" rx="10.5" fill="#F1F5F9"/>
+  <text x="1022" y="404.5" font-size="10.5" font-weight="700" fill="#94A3B8" text-anchor="middle">pre 0.2</text>
+  </g>
+  <g filter="url(#soft)"><rect x="1069.5" y="400" width="165" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="1083.5" y="430" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">Calculator</text>
+  <text x="1083.5" y="450" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">expression: 2.5 * 30</text>
+  <rect x="1163.5" y="390" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="1194" y="404.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.5</text>
+  <rect x="1102.5" y="390" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="1130" y="404.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.3</text>
+  <g filter="url(#soft)"><rect x="680.0" y="560" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="694.0" y="590" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">GoogleSearch</text>
+  <text x="694.0" y="610" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">query: How far can a bald e…</text>
+  <rect x="809.0" y="550" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="840" y="564.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.7</text>
+  <rect x="748.0" y="550" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="776" y="564.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.7</text>
+  <g opacity="0.72">
+  <rect x="100.0" y="720" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="114.0" y="750" font-size="13" font-weight="700" fill="#94A3B8" font-family="ui-monospace, Menlo, Consolas, monospace">✗ GoogleSearch</text>
+  <text x="114.0" y="770" font-size="10.5" fill="#CBD5E1" font-family="ui-monospace, Menlo, Consolas, monospace">query: How far can a bald e…</text>
+  <text x="114.0" y="789" font-size="10" fill="#B91C1C">pre-pruned: r_pre &lt; 0.3</text>
+  <rect x="235.0" y="710" width="55" height="21" rx="10.5" fill="#F1F5F9"/>
+  <text x="262" y="724.5" font-size="10.5" font-weight="700" fill="#94A3B8" text-anchor="middle">pre 0.2</text>
+  </g>
+  <g filter="url(#soft)"><rect x="460.0" y="720" width="200" height="84" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/></g>
+  <text x="474.0" y="750" font-size="13" font-weight="700" fill="#334155" font-family="ui-monospace, Menlo, Consolas, monospace">Calculator</text>
+  <text x="474.0" y="770" font-size="10.5" fill="#64748B" font-family="ui-monospace, Menlo, Consolas, monospace">expression: 2.5 * 45</text>
+  <rect x="589.0" y="710" width="61" height="21" rx="10.5" fill="#64748B"/>
+  <text x="620" y="724.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.8</text>
+  <rect x="528.0" y="710" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="556" y="724.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.8</text>
+  <g filter="url(#soft)"><rect x="32" y="856" width="492" height="84" rx="12" fill="#ECFDF5" stroke="#059669" stroke-width="2"/></g>
+  <circle cx="64" cy="898" r="13" fill="#059669"/>
+  <path d="M58 898l4.5 4.5 8-9" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="88" y="893" font-size="13.5" font-weight="700" fill="#065F46">Final answer · 112.5 miles</text>
+  <text x="88" y="914" font-size="11.5" fill="#059669">trajectory reward R(τ*) = 0.9</text>
+  <rect x="556" y="856" width="652" height="84" rx="12" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <g font-size="11.5" fill="#475569">
+    <path d="M576 876 h40" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+    <path d="M576 876 h40" stroke="#059669" stroke-width="3"/>
+    <text x="624" y="880">final plan (highest-reward path)</text>
+    <path d="M880 876 h40" stroke="#94A3B8" stroke-width="2"/>
+    <text x="928" y="880">executed branch (kept)</text>
+    <path d="M576 903 h40" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="624" y="907">✗ pre-pruned (r_pre &lt; 0.3)</text>
+    <path d="M880 903 h40" stroke="#FCA5A5" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="928" y="907">✗ post-pruned (r_post &lt; 0.4)</text>
+  <rect x="561" y="914" width="55" height="21" rx="10.5" fill="#E2E8F0"/>
+  <text x="588" y="928.5" font-size="10.5" font-weight="700" fill="#475569" text-anchor="middle">pre 0.8</text>
+  <rect x="615" y="914" width="61" height="21" rx="10.5" fill="#059669"/>
+  <text x="646" y="928.5" font-size="10.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">post 0.9</text>
+    <text x="688" y="928">pre / post evaluation scores</text>
+    <text x="928" y="928">duplicate (dedup) drafts omitted</text>
+  </g>
+  <text x="40" y="974" font-size="11.5" fill="#94A3B8">Every tool name, argument draft, and score above is verbatim from the logged run behind this demo (docs/static/demo_data.js, case 3); duplicate (dedup) candidate drafts at expanded nodes are omitted.</text>
+</svg>

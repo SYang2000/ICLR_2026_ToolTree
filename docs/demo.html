@@ -141,6 +141,15 @@
   .stats { display: flex; gap: 22px; flex-wrap: wrap; font-size: .9rem; margin: 6px 0 2px; }
   .stats .k { color: var(--muted); }
   .stats .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+  figure.treefig {
+    margin: 0 0 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px 10px;
+  }
+  figure.treefig img { display: block; width: 100%; height: auto; }
+  figure.treefig figcaption { color: var(--muted); font-size: .8rem; margin-top: 8px; }
   #error {
     display: none;
     background: #f7e8e5;
@@ -186,6 +195,13 @@
   </div>
 
   <noscript><p style="max-width:720px;margin:24px auto;padding:12px 16px;background:#fef3c7;border:1px solid #d97706;border-radius:8px;font-size:14px">This interactive walkthrough requires JavaScript. The search mechanism it illustrates is documented on the <a href="index.html">project page</a> and in the <a href="https://github.com/SYang2000/ICLR_2026_ToolTree">repository README</a>.</p></noscript>
+
+  <figure class="treefig" id="case3-tree">
+    <img src="static/paper/case3_tree.svg" alt="Full search tree of Case 3: from the user query, ImageDescription, GoogleSearch, and Calculator branches carry pre- and post-evaluation scores; dashed boxes mark pruned candidate drafts, and a bold green path through ImageDescription, GoogleSearch, and Calculator leads to the final answer of 112.5 miles." width="1240" height="1000">
+    <figcaption>Search tree of this case (reconstructed from the logged run): solid boxes are executed tool
+      calls with their pre-/post-evaluation scores, dashed boxes are pruned candidate drafts, and the
+      bold green path is the final highest-reward plan.</figcaption>
+  </figure>
 
   <div id="app" style="display:none">
     <div class="tabs" id="tabs"></div>
@@ -396,6 +412,8 @@
     Array.prototype.forEach.call(tabsEl.children, function (b, i) {
       b.className = i === caseIdx ? "active" : "";
     });
+    var treeFig = document.getElementById("case3-tree");
+    if (treeFig) treeFig.style.display = c.id === "case3" ? "" : "none";
     document.getElementById("query").textContent = c.query;
 
     slider.max = steps.length - 1;
