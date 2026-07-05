@@ -59,8 +59,8 @@
         <div class="metric-sub">Across both closed-set and open-set tool planning scenarios</div>
       </div>
       <div class="metric-card">
-        <div class="metric-value">SOTA</div>
-        <div class="metric-label">State-of-the-art across all 4 benchmarks</div>
+        <div class="metric-value">4 / 4</div>
+        <div class="metric-label">State-of-the-art on all four benchmarks</div>
         <div class="metric-sub">GTA &#183; m&amp;m &#183; ToolBench &#183; RestBench</div>
       </div>
       <div class="metric-card">
@@ -118,10 +118,11 @@
     </figure>
 
     <figure class="paper-figure reveal">
-      <img src="static/paper/tooltree_search.svg" alt="Schematic tree of tool calls for a flight-search query: from the user query, candidate tool calls branch out with value scores, the low-scoring branches are drawn dashed as pruned, and one bold path leads to a final answer bar.">
-      <figcaption>Illustrative schematic of the search over tool-call trajectories: each node is a candidate
-        tool call scored by the value estimate, low-value branches are pruned, and the highest-reward
-        trajectory is selected as the final plan.</figcaption>
+      <a href="static/paper/case3_tree.svg" target="_blank" rel="noopener"><img src="static/paper/case3_tree.svg" width="1680" height="1500" alt="Search tree reconstructed from a logged 11-rollout run: from the user query on the left, candidate tool calls branch rightward with pre- and post-evaluation score badges; pre-pruned drafts are dashed with a cross, a failed call is post-pruned in red, duplicate drafts are shown as skipped, and the bold path leads to the final answer bar."></a>
+      <figcaption>Search over tool-call trajectories on a real logged run (11 rollouts): each node is a
+        candidate tool call with its pre-/post-evaluation scores, pruned and duplicate drafts are shown
+        as encountered, and the highest-reward trajectory (bold) is selected as the final plan.
+        Click to view full size.</figcaption>
     </figure>
 
     <div class="mech-grid mech-grid-4 reveal stagger">
@@ -166,16 +167,6 @@
   <div class="container">
     <h2>Case Study</h2>
     <span class="band-label">Qualitative case studies from the paper</span>
-    <div class="case-figure reveal">
-      <img src="static/paper/case_study.png" alt="Iterative inferencing on a road-sign query asking for the distance in miles: early iterations read the kilometre figure off the sign and return it unchanged for a low post-evaluation reward; later iterations add retrieval and unit-conversion tools, the reward rises, and the final iteration answers in miles.">
-    </div>
-    <p class="case-text reveal">
-      The query asks how many <em>miles</em> the journey is, while the road sign in the image gives the
-      distance in kilometres. In early iterations the agent simply reads the kilometre figure off the
-      sign and returns it unchanged, earning a low post-evaluation reward. Across later iterations the
-      search brings in retrieval and unit-conversion tools, the post-evaluation reward rises, and the
-      final trajectory converts the distance and answers in miles.
-    </p>
     <figure class="paper-figure reveal">
       <div class="figure-stack">
         <img src="static/paper/case_study_medical.png" alt="Case study (a): a radiology image question about lung cancer risk — greedy search relies on generic image captioning and heuristic search on shallow heuristics, both missing the finding, while the MCTS-planned trajectory orchestrates domain-specific imaging tools and detects the risk.">
